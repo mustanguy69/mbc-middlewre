@@ -6,6 +6,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use App\Controller\RexSoapController;
+use Symfony\Component\Console\Input\ArrayInput;
 
 class RexSoapCommand extends Command
 {
@@ -32,8 +33,26 @@ class RexSoapCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $test = $this->rexSoapController->testCommand();
+        $bikeCorpAddUpdateProductsCommand = $this->getApplication()->find('app:bikecorp:add-update');
+        $argumentsBikeCorpAddUpdateProductsCommand = [
+            'command' => 'app:bikecorp:add-update'
+        ];
+        $BikeCorpAddUpdateProductsCommandInput = new ArrayInput($argumentsBikeCorpAddUpdateProductsCommand);
+        try {
+            $bikeCorpAddUpdateProductsCommand->run($BikeCorpAddUpdateProductsCommandInput, $output);
+        } catch (\Exception $e) {
+            var_dump($e);
+        }
 
-        $output->writeln($test);
+        $bikeCorpAdjustStockProductsCommand = $this->getApplication()->find('app:bikecorp:adjust-stock');
+        $argumentsBikeCorpAdjustStockProductsCommand = [
+            'command' => 'app:bikecorp:adjust-stock'
+        ];
+        $BikeCorpAdjustStockProductsCommandInput = new ArrayInput($argumentsBikeCorpAdjustStockProductsCommand);
+        try {
+            $bikeCorpAdjustStockProductsCommand->run($BikeCorpAdjustStockProductsCommandInput, $output);
+        } catch (\Exception $e) {
+            var_dump($e);
+        }
     }
 }

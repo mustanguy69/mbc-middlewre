@@ -4,7 +4,7 @@
 namespace App\Controller;
 
 
-class AnotherSoapClient extends \SoapClient
+class anotherSoapClient extends \SoapClient
 {
 
     function __construct($wsdl = "", $options = []) {

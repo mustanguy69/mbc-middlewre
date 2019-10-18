@@ -6,7 +6,7 @@ use SoapFault;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Controller\AnotherSoapClient;
+use App\Controller\anotherSoapClient;
 
 const clientId = "9bf6dd42-35b9-46dd-948a-1c3c91906caa";
 const userName = "wsi";
@@ -128,8 +128,10 @@ class RexSoapController extends AbstractController
     /**
      * Call Soap REX for adding products
      * @Route("/addProducts", defaults={"_format"="text/xml"})
+     * @param  $products
+     * @return Response
      */
-    public function addProducts()
+    public function addProducts($products)
     {
 
         $soapClient = $this->getSoapClient();
@@ -137,18 +139,10 @@ class RexSoapController extends AbstractController
         $xmlRequest = soapHead . '<ret:SaveProducts xmlns="http://retailexpress.com.au/">
             <ret:productsXml>
                 <![CDATA[
-                    <Product>
-                        <ProductID>89898989</ProductID>
-                        <SupplierSKU>MPC24</SupplierSKU>
-                        <ShortDescription>Tyre for road bikes 2</ShortDescription>
-                        <SupplierCode>S1</SupplierCode>
-                        <ProductType>T-shirt</ProductType>
-                        <Weight>14.00</Weight>
-                        <Type>Tyres - Road -Race</Type>
-                    </Product>
+                <Products>'.$products.'</Products>
                 ]]>
             </ret:productsXml>
-        </ret:SaveProducts >' . soapFoot;
+        </ret:SaveProducts>' . soapFoot;
 
         try {
             $request = $soapClient->__anotherRequest('SaveProducts', $xmlRequest);
@@ -158,7 +152,39 @@ class RexSoapController extends AbstractController
         }
 
         $response = new Response($request);
-        $response->headers->set('Content-Type', 'text/xml');
+
+        return $response;
+
+    }
+
+    /**
+     * Call Soap REX for adding products
+     * @Route("/adjustStocks", defaults={"_format"="text/xml"})
+     * @param  $products
+     * @return Response
+     */
+    public function adjustStocks($products)
+    {
+
+        $soapClient = $this->getSoapClient();
+
+        $xmlRequest = soapHead . '<ret:SaveProductOutletDetails>
+            <ret:productsXml>
+                <![CDATA[
+                <Products>'.$products.'</Products>
+                ]]>
+            </ret:productsXml>
+            <ret:outletRef>3</ret:outletRef> 
+        </ret:SaveProductOutletDetails>' . soapFoot;
+
+        try {
+            $request = $soapClient->__anotherRequest('SaveProductOutletDetails', $xmlRequest);
+        } catch (SoapFault $e ){
+            var_dump($e);
+            exit();
+        }
+
+        $response = new Response($request);
 
         return $response;
 
