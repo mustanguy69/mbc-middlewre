@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Controller\AddUpdateImagesShopifyController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -9,7 +10,7 @@ use App\Controller\RexSoapController;
 use Psr\Log\LoggerInterface;
 
 
-const url = "http://www.bikecorp.com.au/documents/ProductFeed734430f-f300-45b6-964c-3f7d79c9c975.xml";
+const bikeCorpApiuUrl = "http://www.bikecorp.com.au/documents/ProductFeed734430f-f300-45b6-964c-3f7d79c9c975.xml";
 const supplier = "BikeCorp";
 const supplierCode = "BC";
 
@@ -21,7 +22,7 @@ class BikeCorpController extends AbstractController
      */
     public function addUpdateProduct() {
 
-        $bikeCorpXml = simplexml_load_file(url);
+        $bikeCorpXml = simplexml_load_file(bikeCorpApiuUrl);
         $today = new \DateTime();
         $today = $today->format('Y-m-d H:i:s');
         $matchingForRex = "";
@@ -54,12 +55,17 @@ class BikeCorpController extends AbstractController
         $body = $xml->xpath('//soapBody')[0];
         $array = json_decode(json_encode((array)$body), TRUE);
 
+        foreach ($array['SaveProductsResponse']['SaveProductsResult']['Response']['SavedProducts'] as $product) {
+            // @todo find how to link shopify image
+            $rexRequest = (new AddUpdateImagesShopifyController())->addUpdateImage($product['SavedProduct']['ProductId'], 'findoutWhenRexLinked');
+        }
+
         return $array['SaveProductsResponse']['SaveProductsResult']['Response'];
     }
 
     function adjustStocksProduct() {
 
-        $bikeCorpXml = simplexml_load_file(url);
+        $bikeCorpXml = simplexml_load_file(bikeCorpApiuUrl);
         $matchingForRex = "";
         foreach ($bikeCorpXml[0] as $product) {
             $matchingForRex .= "
