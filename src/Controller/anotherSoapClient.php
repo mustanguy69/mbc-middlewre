@@ -16,7 +16,7 @@ class anotherSoapClient extends \SoapClient
         return $result;
     }
     function __anotherRequest($call, $params) {
-        $location = 'http://v2wsisandbox.retailexpress.com.au/dotnet/admin/webservices/v2/inventoryplanning/inventoryplanningservice.asmx';
+        $location = 'http://trainingmelbournebicyclecentre.retailexpress.com.au/dotnet/admin/webservices/v2/inventoryplanning/inventoryplanningservice.asmx';
         $action = 'http://retailexpress.com.au/'.$call;
         $request = $params;
         $result =$this->__doRequest($request, $location, $action, '1.1');

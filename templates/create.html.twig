@@ -1,0 +1,134 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container createpage">
+        <div class="list-container">
+            <div class="title">
+                <h2>Create a new product</h2>
+                <div class="switch">
+                    <label for="another-basic-switch">Add on Shopify</label>
+                    <div class="mdc-switch mdc-switch--checked">
+                        <div class="mdc-switch__track"></div>
+                        <div class="mdc-switch__thumb-underlay">
+                            <div class="mdc-switch__thumb">
+                                <input type="checkbox" id="another-basic-switch" class="mdc-switch__native-control" role="switch" checked>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <form method="POST" action="#">
+                <div class="left-side">
+                    <div class="mdc-form-field">
+                        <div class="line">
+                            <div class="mdc-text-field">
+                                <input type="text"  class="mdc-text-field__input">
+                                <label class="mdc-floating-label" for="my-text-field">Product Title</label>
+                                <div class="mdc-line-ripple"></div>
+                            </div>
+                            <div class="mdc-text-field">
+                                <input type="text"  class="mdc-text-field__input">
+                                <label class="mdc-floating-label" for="my-text-field">Product SKU</label>
+                                <div class="mdc-line-ripple"></div>
+                            </div>
+                        </div>
+                        <div class="line">
+                            <div class="mdc-select">
+                                <div class="mdc-select__anchor demo-width-class">
+                                    <i class="mdc-select__dropdown-icon"></i>
+                                    <div class="mdc-select__selected-text"></div>
+                                    <span class="mdc-floating-label">Supplier</span>
+                                    <div class="mdc-line-ripple"></div>
+                                </div>
+
+                                <div class="mdc-select__menu mdc-menu mdc-menu-surface demo-width-class">
+                                    <ul class="mdc-list">
+                                        {% for supplier in suppliers %}
+                                            <li class="mdc-list-item" data-value="{{ supplier.name }}" data-supplier-code="{{ supplier.code }}" data-supplier-name="{{ supplier.name }}">
+                                                {{ supplier.code }} - {{ supplier.name }}
+                                            </li>
+                                        {% endfor%}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="mdc-select">
+                                <div class="mdc-select__anchor">
+                                    <i class="mdc-select__dropdown-icon"></i>
+                                    <div class="mdc-select__selected-text"></div>
+                                    <span class="mdc-floating-label">Brand</span>
+                                    <div class="mdc-line-ripple"></div>
+                                </div>
+
+                                <div class="mdc-select__menu mdc-menu mdc-menu-surface">
+                                    <ul class="mdc-list">
+                                        {% for brand in brands %}
+                                            <li class="mdc-list-item" data-value="{{ brand.name }}" data-brand-name="{{ brand.name }}">
+                                                {{ brand.name }}
+                                            </li>
+                                        {% endfor%}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="line">
+                            <div class="mdc-text-field mdc-text-field--textarea">
+                                <textarea id="textarea" class="mdc-text-field__input" rows="8" cols="40"></textarea>
+                                <div class="mdc-notched-outline">
+                                    <div class="mdc-notched-outline__leading"></div>
+                                    <div class="mdc-notched-outline__notch">
+                                        <label for="textarea" class="mdc-floating-label">Description</label>
+                                    </div>
+                                    <div class="mdc-notched-outline__trailing"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="line">
+                            <div class="mdc-select">
+                                <div class="mdc-select__anchor demo-width-class">
+                                    <i class="mdc-select__dropdown-icon"></i>
+                                    <div class="mdc-select__selected-text"></div>
+                                    <span class="mdc-floating-label">Product Type</span>
+                                    <div class="mdc-line-ripple"></div>
+                                </div>
+
+                                <div class="mdc-select__menu mdc-menu mdc-menu-surface demo-width-class">
+                                    <ul class="mdc-list">
+                                        {% for supplier in suppliers %}
+                                            <li class="mdc-list-item" data-value="{{ supplier.name }}" data-supplier-code="{{ supplier.code }}" data-supplier-name="{{ supplier.name }}">
+                                                {{ supplier.code }} - {{ supplier.name }}
+                                            </li>
+                                        {% endfor%}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="mdc-text-field">
+                                <input type="text"  class="mdc-text-field__input">
+                                <label class="mdc-floating-label" for="my-text-field">Product Tags</label>
+                                <div class="mdc-line-ripple"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-side">
+                    <div class="file-upload">
+                        <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Add Image</button>
+
+                        <div class="image-upload-wrap">
+                            <input class="file-upload-input" type='file' onchange="readURL(this);" accept="image/*" />
+                            <div class="drag-text">
+                                <h3>Drag and drop a file or select add Image</h3>
+                            </div>
+                        </div>
+                        <div class="file-upload-content">
+                            <img class="file-upload-image" src="#" alt="your image" />
+                            <div class="image-title-wrap">
+                                <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded Image</span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

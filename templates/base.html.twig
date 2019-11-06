@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}M.B.C Middle-Ware{% endblock %}</title>
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+            <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+        {% endblock %}
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+            <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+        {% endblock %}
+    </head>
+    <body>
+        {% include 'menu.html.twig' %}
+        {% block body %}{% endblock %}
+    </body>
+</html>

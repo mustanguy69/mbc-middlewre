@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container listpage">
+        <input type="text" id="search" placeholder="search"/>
+        <div class="list-container">
+            {% for product in products %}
+                {% for item in product %}
+                    <ul>
+                        <li>{{ item.id }}</li>
+                    </ul>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function (e) {
+            var value = '';
+           $('#search').on('keydown', function () {
+               value = $(this).val();
+               if (value.length > 3) {
+                   $.ajax({
+                       type: "GET",
+                       url: '{{ path('getProductsByTitle') }}',
+                       data: {
+                         title: value,
+                       },
+                       success: function (data) {
+                           console.log(data);
+                       },
+                       error: function (XMLHttpRequest, textStatus, errorThrown) {
+                           alert('Error : ' + errorThrown);
+                       }
+                   });
+               }
+           })
+        });
+    </script>
+{% endblock %}

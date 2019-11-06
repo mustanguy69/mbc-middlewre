@@ -21,3 +21,11 @@ monolog:
             handler: deprecation
             max_level: info
             channels: ["php"]
+        bikecorp:
+            type: stream
+            path: "%kernel.logs_dir%/bikecorp.log"
+            level: debug
+        velovita:
+            type: stream
+            path: "%kernel.logs_dir%/velovita.log"
+            level: debug

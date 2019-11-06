@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container homepage">
+        <div class="logo">
+            <img src="{{ asset('dist/img/logo4.png') }}"/>
+            <h2>Middle-Ware</h2>
+        </div>
+        <div class="add-product home-btn">
+
+        </div>
+        <div class="add-product home-btn">
+            <a href="{{ path('createProductsShopify') }}" class="btn-container">
+                <i class="material-icons">
+                    add_circle_outline
+                </i>
+                <p>Add a new Product</p>
+            </a>
+        </div>
+        <div class="list-product home-btn">
+            <a href="{{ path('listProductsShopify') }}" class="btn-container">
+                <i class="material-icons">
+                    list
+                </i>
+                <p>List / Update Products</p>
+            </a>
+        </div>
+
+    </div>
+{% endblock %}
