@@ -7,9 +7,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\BrandsRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\ProductSizesRepository")
  */
-class Brands
+class ProductSizes
 {
     /**
      * @ORM\Id()
@@ -20,16 +20,21 @@ class Brands
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private $size;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Products", mappedBy="brand")
+     * @ORM\OneToMany(targetEntity="App\Entity\Products", mappedBy="size")
      */
     private $products;
 
     public function __construct()
     {
         $this->products = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
     }
 
     /**
@@ -40,20 +45,14 @@ class Brands
         $this->id = $id;
     }
 
-
-    public function getId(): ?int
+    public function getSize(): ?string
     {
-        return $this->id;
+        return $this->size;
     }
 
-    public function getName(): ?string
+    public function setSize(string $size): self
     {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
+        $this->size = $size;
 
         return $this;
     }
@@ -70,7 +69,7 @@ class Brands
     {
         if (!$this->products->contains($product)) {
             $this->products[] = $product;
-            $product->setBrand($this);
+            $product->setSize($this);
         }
 
         return $this;
@@ -81,8 +80,8 @@ class Brands
         if ($this->products->contains($product)) {
             $this->products->removeElement($product);
             // set the owning side to null (unless already changed)
-            if ($product->getBrand() === $this) {
-                $product->setBrand(null);
+            if ($product->getSize() === $this) {
+                $product->setSize(null);
             }
         }
 

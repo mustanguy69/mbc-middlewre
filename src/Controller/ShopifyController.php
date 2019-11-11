@@ -28,17 +28,24 @@ class ShopifyController extends AbstractController
      * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
-    public function addUpdateImage($productId, $image = null) {
-        $image = "https://www.bikes.com.au/media/catalog/product/cache/2/image/800x/9df78eab33525d08d6e5fb8d27136e95/2/0/2018-focus-raven-max-sl-mtb-race-hardtail.jpg";
-        $data = [
-            'image' => [
-                'src' =>  $image,
-            ]
+    public function addUpdateImage($productId, $images = null) {
+        $images = [
+            'https://www.bikes.com.au/media/catalog/product/cache/2/small_image/300x300/9df78eab33525d08d6e5fb8d27136e95/p/a/paralane_al_105.jpg',
+            'https://www.bikes.com.au/media/catalog/product/cache/2/small_image/300x300/9df78eab33525d08d6e5fb8d27136e95/2/0/2017-focus-mares-ax-commuter-_0.jpg'
         ];
+
+        $data = [
+            'product' => [
+                'images' => [],
+            ],
+        ];
+        foreach ($images as $image) {
+            $data['product']['images'][] = ['src' => $image];
+        }
 
         try {
             $client = HttpClient::create();
-            $response = $client->request('POST', shopifyIApiurl . 'products/' . $productId . '/images.json', ['json' => $data]);
+            $response = $client->request('PUT', shopifyIApiurl . 'products/' . $productId . '.json', ['json' => $data]);
         } catch (\Exception $e) {
             var_dump($e);
         }

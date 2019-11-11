@@ -15,5 +15,7 @@
     <body>
         {% include 'menu.html.twig' %}
         {% block body %}{% endblock %}
+        {% include 'notification.hml.twig' with {'text': ''} %}
+        {% include('loader.html.twig') %}
     </body>
 </html>

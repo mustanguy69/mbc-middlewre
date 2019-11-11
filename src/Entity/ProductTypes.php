@@ -7,9 +7,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\BrandsRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\ProductTypesRepository")
  */
-class Brands
+class ProductTypes
 {
     /**
      * @ORM\Id()
@@ -23,7 +23,7 @@ class Brands
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Products", mappedBy="brand")
+     * @ORM\OneToMany(targetEntity="App\Entity\Products", mappedBy="type")
      */
     private $products;
 
@@ -32,18 +32,17 @@ class Brands
         $this->products = new ArrayCollection();
     }
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
     /**
      * @param mixed $id
      */
     public function setId($id): void
     {
         $this->id = $id;
-    }
-
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getName(): ?string
@@ -70,7 +69,7 @@ class Brands
     {
         if (!$this->products->contains($product)) {
             $this->products[] = $product;
-            $product->setBrand($this);
+            $product->setType($this);
         }
 
         return $this;
@@ -81,8 +80,8 @@ class Brands
         if ($this->products->contains($product)) {
             $this->products->removeElement($product);
             // set the owning side to null (unless already changed)
-            if ($product->getBrand() === $this) {
-                $product->setBrand(null);
+            if ($product->getType() === $this) {
+                $product->setType(null);
             }
         }
 

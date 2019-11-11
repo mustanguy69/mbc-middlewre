@@ -3,8 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Brands;
+use App\Entity\ProductColors;
+use App\Entity\ProductSizes;
+use App\Entity\ProductTypes;
+use App\Entity\Suppliers;
 use SoapFault;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Controller\anotherSoapClient;
@@ -264,6 +269,140 @@ class RexSoapController extends AbstractController
 
         return $response;
 
+    }
+
+    /**
+     * Call Soap REX for adding Attributes
+     * @Route("/addUpdateAttribute", defaults={"_format"="text/xml"})
+     * @param  $attribute
+     * @return Response
+     */
+    public function addUpdateAttributes(Request $request)
+    {
+        $attributeType = $request->request->get('attributeType');
+        $attributeId = $request->request->get('attributeId');
+        $attributeXml = $request->request->get('attributeXml');
+        $attributeName = $request->request->get('attributeName');
+        $attributeCode = $request->request->get('attributeCode');
+        $action = $request->request->get('action');
+
+        $soapClient = $this->getSoapClient();
+
+        $xmlRequest = soapHead . '<ret:SaveProductAttributes>
+            <ret:attributesXml>
+                <![CDATA[
+                <Attributes>'.$attributeXml.'</Attributes>
+                ]]>
+            </ret:attributesXml>
+        </ret:SaveProductAttributes>' . soapFoot;
+
+        try {
+            $request = $soapClient->__anotherRequest('SaveProductAttributes', $xmlRequest);
+        } catch (SoapFault $e ){
+            var_dump($e);
+            exit();
+        }
+
+        $xmlRequest     = new \SimpleXMLElement($request);
+        $response = $xmlRequest->children('http://schemas.xmlsoap.org/soap/envelope/')->Body->children()->SaveProductAttributesResponse;
+        $id = (string) $response->SaveProductAttributesResult->Response->Details->Attributes->Attribute->AttributeID;
+
+        $em = $this->getDoctrine()->getManager();
+        if ($action === "create") {
+            if($attributeType === 'brand-attribute') {
+                $brand = new Brands();
+                $brand->setId($id);
+                $brand->setName($attributeName);
+
+                $em->persist($brand);
+            } elseif($attributeType === 'supplier-attribute') {
+                $supplier = new Suppliers();
+                $supplier->setId($id);
+                $supplier->setName($attributeName);
+                $supplier->setCode($attributeCode);
+
+                $em->persist($supplier);
+            } elseif($attributeType === 'type-attribute') {
+                $type = new ProductTypes();
+                $type->setId($id);
+                $type->setName($attributeName);
+
+                $em->persist($type);
+            } elseif($attributeType === 'size-attribute') {
+                $size = new ProductSizes();
+                $size->setId($id);
+                $size->setSize($attributeName);
+
+                $em->persist($size);
+            } elseif($attributeType === 'color-attribute') {
+                $color = new ProductColors();
+                $color->setId($id);
+                $color->setName($attributeName);
+
+                $em->persist($color);
+            }
+        } elseif ($action === "update") {
+            if($attributeType === 'brand-attribute') {
+                $brand = $em->getRepository('App:Brands')->find($attributeId);
+                $brand->setName($attributeName);
+            } elseif($attributeType === 'supplier-attribute') {
+                $supplier = $em->getRepository('App:Suppliers')->find($attributeId);
+                $supplier->setName($attributeName);
+                $supplier->setCode($attributeCode);
+            } elseif($attributeType === 'type-attribute') {
+                $type = $em->getRepository('App:ProductTypes')->find($attributeId);
+                $type->setName($attributeName);
+            } elseif($attributeType === 'size-attribute') {
+                $size = $em->getRepository('App:ProductSizes')->find($attributeId);
+                $size->setSize($attributeName);
+            } elseif($attributeType === 'color-attribute') {
+                $color = $em->getRepository('App:ProductColors')->find($attributeId);
+                $color->setName($attributeName);
+            }
+        }
+
+        $em->flush();
+
+        $response = new Response($request);
+
+        return $response;
+
+    }
+
+    /**
+     * Remove attribute from BDD
+     * @Route("/removeAttribute", defaults={"_format"="text/xml"})
+     * @param  $attribute
+     * @return Response
+     */
+    public function removeAttribute(Request $request)
+    {
+        $attribute = $request->request->get('attribute');
+        $attributeId = $request->request->get('id');
+
+        $em = $this->getDoctrine()->getManager();
+        
+        if($attribute === 'brand-attribute') {
+            $brand = $em->getRepository('App:Brands')->find($attributeId);
+            $em->remove($brand);
+        } elseif($attribute === 'supplier-attribute') {
+            $supplier = $em->getRepository('App:Suppliers')->find($attributeId);
+            $em->remove($supplier);
+        } elseif($attribute === 'type-attribute') {
+            $type = $em->getRepository('App:ProductTypes')->find($attributeId);
+            $em->remove($type);
+        } elseif($attribute === 'size-attribute') {
+            $size = $em->getRepository('App:ProductSizes')->find($attributeId);
+            $em->remove($size);
+        } elseif($attribute === 'color-attribute') {
+            $color = $em->getRepository('App:ProductColors')->find($attributeId);
+            $em->remove($color);
+        }
+
+        $em->flush();
+
+        return new Response('Attribute deleted');
+        
     }
 
 }

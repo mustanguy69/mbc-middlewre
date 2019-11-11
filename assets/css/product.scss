@@ -1,0 +1,243 @@
+.createpage {
+  .title {
+    .switch {
+      text-align: end;
+      margin-top: -40px;
+      .mdc-switch__thumb-underlay::before, .mdc-switch__thumb-underlay::after {
+        background-color: #ae88e8;
+      }
+      .mdc-switch.mdc-switch--checked .mdc-switch__track {
+        background-color: #ae88e8;
+        border-color: #ae88e8;
+      }
+      .mdc-switch.mdc-switch--checked .mdc-switch__thumb {
+        background-color: #6200ee;
+        border-color: #6200ee;
+      }
+    }
+  }
+  hr {
+    margin-bottom: 20px;
+  }
+  .mdc-text-field {
+    margin-right: 15px;
+    width: 45%;
+    display: inline-block;
+  }
+  .mdc-select {
+    position: relative;
+    display: inline-block;
+    margin-right: 15px;
+    width: 45%;
+    vertical-align: top;
+    .mdc-select__anchor {
+      width:100%;
+    }
+    .mdc-menu-surface--open {
+      min-width: 100%;
+    }
+  }
+  .line {
+    margin-bottom: 20px;
+  }
+  .search-input {
+    width: 90%;
+    margin: 8px auto;
+    display: block;
+    border: none;
+    border-bottom: 1px solid grey;
+    height: 25px;
+    outline:0;
+    &::placeholder{
+      font-family: 'Open Sans', 'Material Icons', sans-serif;
+      font-style: normal;
+      color: grey;
+    }
+    &:focus {
+      border-bottom: 1px solid black;
+    }
+  }
+  .left-side {
+    width: 50%;
+    float: left;
+    .mdc-form-field {
+      display: block;
+      .mdc-text-field--textarea {
+        width: 93%;
+        display: inline-flex;
+      }
+      .tag-container {
+        width: 45%;
+        display: inline-block;
+        .mdc-text-field {
+          width:100% !important;
+        }
+        .tag {
+          background-color: #ae88e8;
+          color: white;
+          padding: 4px;
+          margin-right: 3px;
+          .remove-tag {
+            cursor: pointer;
+            i {
+              font-size: 11px;
+              margin-right: 3px;
+            }
+          }
+        }
+      }
+
+      .barcode-line {
+        .mdc-text-field {
+          width: 92.5%;
+        }
+      }
+    }
+  }
+
+  .right-side {
+    width: 50%;
+    float: right;
+    .file-upload {
+      background-color: #ffffff;
+      width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      margin-bottom: 35px;
+
+      .img-container-0  {
+        width: 55% !important;
+        img {
+          width: 100% !important;
+        }
+      }
+
+      .img-container {
+        padding: 5px;
+        width: 15%;
+        float: left;
+        img {
+          width: 100%;
+        }
+      }
+
+      .add-images {
+        width:15%;
+        float:left;
+        padding:20px;
+      }
+
+    }
+
+    .file-upload-btn {
+      width: 100%;
+      margin: 0;
+      color: #000;
+      background: #f5f5f5;
+      border: none;
+      padding: 10px;
+      border-radius: 4px 4px 0 0;
+      border-bottom: 2px solid;
+      border-bottom-color: rgba(0,0,0,.12);
+      transition: all .2s ease;
+      outline: none;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .file-upload-btn:hover {
+      background: #6200ee;
+      color: #ffffff;
+      transition: all .2s ease;
+      cursor: pointer;
+    }
+
+    .file-upload-btn:active {
+      border: 0;
+      transition: all .2s ease;
+    }
+
+    .file-upload-content {
+      display: none;
+    }
+
+    .file-upload-input {
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      outline: none;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .image-upload-wrap {
+      margin-top: 20px;
+      border: 2px dashed #b2b2b2;
+      position: relative;
+    }
+
+    .image-title-wrap {
+      padding: 0 15px 15px 15px;
+      color: #b2b2b2;
+    }
+
+    .drag-text {
+      text-align: center;
+    }
+
+    .drag-text h3 {
+      font-weight: 100;
+      text-transform: uppercase;
+      color: #b2b2b2;
+      padding: 60px 0;
+    }
+
+    .remove-image {
+      width: 30px;
+      margin: 0;
+      color: #fff;
+      background: #cd4535;
+      border: none;
+      border-radius: 4px;
+      transition: all .2s ease;
+      outline: none;
+      font-weight: 700;
+      position: absolute;
+      margin-left: 5px;
+      margin-top: 5px;
+      i {
+        font-size: 18px;
+      }
+
+    }
+
+    .remove-image:hover {
+      background: #c13b2a;
+      color: #ffffff;
+      transition: all .2s ease;
+      cursor: pointer;
+    }
+
+    .remove-image:active {
+      border: 0;
+      transition: all .2s ease;
+    }
+
+    .line {
+      text-align: center;
+      .mdc-select {
+        text-align: left;
+      }
+    }
+  }
+
+  .btn-form-container {
+    width: 100%;
+    text-align: center;
+    float: left;
+    margin-top: 50px;
+    margin-bottom: 25px;
+  }
+}
