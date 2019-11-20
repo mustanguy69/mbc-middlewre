@@ -1,0 +1,43 @@
+<div class="overlay-popup-rex">
+    <div class="popup-rex">
+        <h2><i class="material-icons mdc-theme--error">warning</i>Before further action ...<i class="material-icons mdc-theme--error">warning</i></h2>
+        <p>You have some products waiting for the REX mass upload !</p>
+        <p>This operation is mandatory for the synchronization between REX and Shopify</p>
+        <a class="mdc-button mdc-button--raised" href="{{ path('exportExcelMassUpload') }}" style="text-align: center">Download excel file</a>
+        <a class="mdc-button mdc-button--raised upload-done" href="{{ path('massUploadDone') }}">I have uploaded this file in REX</a>
+        <br>
+        <a class="remind-later" href="{{ path('popupRemindLater') }}">Remind me in 10 minutes</a>
+    </div>
+</div>
+<script>
+    $('.remind-later').on('click', function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        $.ajax({
+            url: $(this).attr('href'),
+            type: 'GET',
+            success: function (data, status) {
+                $('.overlay-popup-rex').css('display', 'none');
+                $('.mdc-snackbar__label').empty().text('Popup hidden for 10 minutes !');
+                snackbar.open();
+            }
+        });
+    });
+
+    $('.upload-done').on('click', function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        $.ajax({
+            url: $(this).attr('href'),
+            type: 'GET',
+            beforeSend:function(){
+                return confirm("Are you sure?");
+            },
+            success: function (data, status) {
+                $('.overlay-popup-rex').css('display', 'none');
+                $('.mdc-snackbar__label').empty().text('Products updated !');
+                snackbar.open();
+            }
+        });
+    })
+</script>

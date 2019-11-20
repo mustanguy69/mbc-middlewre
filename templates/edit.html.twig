@@ -1,0 +1,390 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container createpage">
+        <form method="POST" action="{{ path('updateProductBdd') }}" id="edit-form">
+            <div class="list-container">
+                <div class="title">
+                    <h2>Update a product</h2>
+                    <p>Update a product</p>
+                    <div class="switch">
+                        <label for="another-basic-switch">Add on Shopify</label>
+                        <div class="mdc-switch mdc-switch--checked">
+                            <div class="mdc-switch__track"></div>
+                            <div class="mdc-switch__thumb-underlay">
+                                <div class="mdc-switch__thumb">
+                                    <input type="checkbox" id="another-basic-switch" name="shopify" class="mdc-switch__native-control" role="switch" {% if product.toShopify %}checked{% endif %}>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="left-side">
+                    <div class="mdc-form-field">
+                        <div class="line">
+                            <div class="mdc-text-field">
+                                <input type="text"  name='title' value="{{ product.title }}" class="mdc-text-field__input" required>
+                                <label class="mdc-floating-label" for="my-text-field">Product Title</label>
+                                <div class="mdc-line-ripple"></div>
+                            </div>
+                            <div class="mdc-text-field">
+                                <input type="text" name='sku' value="{{ product.sku }}" class="mdc-text-field__input" required>
+                                <label class="mdc-floating-label" for="my-text-field">Product SKU</label>
+                                <div class="mdc-line-ripple"></div>
+                            </div>
+                        </div>
+                        <div class="line">
+                            <div class="mdc-select mdc-select--required">
+                                <div class="mdc-select__anchor demo-width-class">
+                                    <i class="mdc-select__dropdown-icon"></i>
+                                    <div class="mdc-select__selected-text"></div>
+                                    <span class="mdc-floating-label">Supplier</span>
+                                    <div class="mdc-line-ripple"></div>
+                                </div>
+
+                                <div class="mdc-select__menu mdc-menu mdc-menu-surface demo-width-class">
+                                    <ul class="mdc-list">
+                                        <li>
+                                            <input type="text" class="search-input" placeholder="&#xE8B6; Search"/>
+                                        </li>
+                                        <div class="searchable">
+                                            {% for supplier in suppliers %}
+                                                <li class="mdc-list-item {% if product.supplier.id == supplier.id %}mdc-list-item--selected{% endif %}" data-value="{{ supplier.id }}">
+                                                    {{ supplier.code }} - {{ supplier.name }}
+                                                </li>
+                                            {% endfor%}
+                                        </div>
+                                    </ul>
+                                </div>
+                                <input type="hidden" class='input-select' {% if product.supplier %}value="{{ product.supplier.id }}"{% endif %} name="supplier" required>
+                            </div>
+                            <div class="mdc-select mdc-select--required">
+                                <div class="mdc-select__anchor">
+                                    <i class="mdc-select__dropdown-icon"></i>
+                                    <div class="mdc-select__selected-text"></div>
+                                    <span class="mdc-floating-label">Brand</span>
+                                    <div class="mdc-line-ripple"></div>
+                                </div>
+
+                                <div class="mdc-select__menu mdc-menu mdc-menu-surface">
+                                    <ul class="mdc-list">
+                                        <li>
+                                            <input type="text" class="search-input" placeholder="&#xE8B6; Search"/>
+                                        </li>
+                                        <div class="searchable">
+                                            {% for brand in brands %}
+                                                <li class="mdc-list-item {% if product.brand.id == brand.id %}mdc-list-item--selected{% endif %}" data-value="{{ brand.id }}">
+                                                    {{ brand.name }}
+                                                </li>
+                                            {% endfor%}
+                                        </div>
+                                    </ul>
+                                </div>
+                                <input type="hidden" class='input-select' {% if product.brand %}value="{{ product.brand.id }}"{% endif %} name="brand">
+                            </div>
+                        </div>
+                        <div class="line">
+                            <div class="mdc-text-field mdc-text-field--textarea">
+                                <textarea id="textarea" name="description" class="mdc-text-field__input" rows="8" cols="40">{{ product.description }}</textarea>
+                                <div class="mdc-notched-outline">
+                                    <div class="mdc-notched-outline__leading"></div>
+                                    <div class="mdc-notched-outline__notch">
+                                        <label for="textarea" class="mdc-floating-label">Description</label>
+                                    </div>
+                                    <div class="mdc-notched-outline__trailing"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="line">
+                            <div class="mdc-select mdc-select--required">
+                                <div class="mdc-select__anchor demo-width-class">
+                                    <i class="mdc-select__dropdown-icon"></i>
+                                    <div class="mdc-select__selected-text"></div>
+                                    <span class="mdc-floating-label">Product Type</span>
+                                    <div class="mdc-line-ripple"></div>
+                                </div>
+
+                                <div class="mdc-select__menu mdc-menu mdc-menu-surface demo-width-class">
+                                    <ul class="mdc-list">
+                                        <li>
+                                            <input type="text" class="search-input" placeholder="&#xE8B6; Search"/>
+                                        </li>
+                                        <div class="searchable">
+                                            {% for type in types %}
+                                                <li class="mdc-list-item {% if product.type.id == type.id %}mdc-list-item--selected{% endif %}" data-value="{{ type.id }}">
+                                                    {{ type.name }}
+                                                </li>
+                                            {% endfor%}
+                                        </div>
+                                    </ul>
+                                </div>
+                                <input type="hidden" class='input-select' {% if product.type %}value="{{ product.type.id }}"{% endif %} name="product-type">
+                            </div>
+                            <div class="tag-container">
+                                <div class="mdc-text-field">
+                                    <input type="text" name="tags-field"  class="mdc-text-field__input">
+                                    <label class="mdc-floating-label" for="my-text-field">Product Tags</label>
+                                    <div class="mdc-line-ripple"></div>
+                                </div>
+                                <input type="hidden" class="input-tag" value="{{ product.tags }}" name="tags">
+                                {% set tags = product.tags|split(',') %}
+                                {% if product.tags|length != 0 %}
+                                    {% for tag in tags %}
+                                        <span class="tag">
+                                            <span class="remove-tag" data-value="{{ tag }}"><i class="material-icons">close</i></span>{{ tag }}
+                                        </span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="line">
+                            <div class="mdc-text-field">
+                                <input type="text" name="price" value="{{ product.price }}" class="mdc-text-field__input" required>
+                                <label class="mdc-floating-label" for="my-text-field">Price ($)</label>
+                                <div class="mdc-line-ripple"></div>
+                            </div>
+                            <div class="mdc-text-field">
+                                <input type="text"  name="compare" value="{{ product.compare }}" class="mdc-text-field__input">
+                                <label class="mdc-floating-label" for="my-text-field">Compare at Price ($)</label>
+                                <div class="mdc-line-ripple"></div>
+                            </div>
+                        </div>
+                        <div class="line barcode-line">
+                            <div class="mdc-text-field">
+                                <input type="text" name="barcode" value="{{ product.barcode }}"  class="mdc-text-field__input">
+                                <label class="mdc-floating-label" for="my-text-field">Barcode (Use for variants)</label>
+                                <div class="mdc-line-ripple"></div>
+                            </div>
+                        </div>
+                        <div class="line">
+                            <div class="mdc-text-field">
+                                <input type="text"  name="supplier-stock" value="{{ product.supplierStock }}" class="mdc-text-field__input" required>
+                                <label class="mdc-floating-label" for="my-text-field">Supplier Stock</label>
+                                <div class="mdc-line-ripple"></div>
+                            </div>
+                            <div class="mdc-text-field">
+                                <input type="text" name="stock" value="{{ product.stock }}" class="mdc-text-field__input" required>
+                                <label class="mdc-floating-label" for="my-text-field">In-shop Stock</label>
+                                <div class="mdc-line-ripple"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-side">
+                    <div class="file-upload">
+                        <button class="file-upload-btn" type="button" >Add Images</button>
+
+                        <div class="image-upload-wrap">
+                            <input class="file-upload-input" name="base64Image" type='file'  accept="image/*" multiple/>
+                            <div class="drag-text">
+                                <h3>Drag and drop a file or select add Images</h3>
+                            </div>
+                        </div>
+                        <div class="file-upload-content">
+                            {% if product.images|length != 0 %}
+                                <script>
+                                    $('.image-upload-wrap').hide();
+                                    $('.file-upload-content').show();
+                                </script>
+                                {% for image in product.images %}
+                                    <div class="img-container img-container-{{ loop.index - 1 }}" data-name="{{ image.id }}">
+                                        <button type="button" data-name="{{ image.id }}" class="remove-image"><i class="material-icons">close</i></button>
+                                        <img class="file-upload-image" data-name="{{ image.id }}" src="{{ image.src }}"/>
+                                        <input type="text" style="width:99%" placeholder="name" value="{{ image.name }}" name="base64ImageNameUploaded[]" disabled/>
+                                        <input type="hidden" class='file-upload-input-hidden-uploaded' data-name="{{ image.id }}" name="base64ImageUploaded[]" value="{{ image.id }}"/>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="line">
+                        <div class="mdc-text-field">
+                            <input type="text"  name="weight" value="{{ product.weight }}" class="mdc-text-field__input">
+                            <label class="mdc-floating-label" for="my-text-field">Weight (kg)</label>
+                            <div class="mdc-line-ripple"></div>
+                        </div>
+                        <div class="mdc-text-field">
+                            <input type="text" name="length" value="{{ product.length }}" class="mdc-text-field__input">
+                            <label class="mdc-floating-label" for="my-text-field">Length</label>
+                            <div class="mdc-line-ripple"></div>
+                        </div>
+                    </div>
+                    <div class="line">
+                        <div class="mdc-select">
+                            <div class="mdc-select__anchor demo-width-class">
+                                <i class="mdc-select__dropdown-icon"></i>
+                                <div class="mdc-select__selected-text"></div>
+                                <span class="mdc-floating-label">Season</span>
+                                <div class="mdc-line-ripple"></div>
+                            </div>
+
+                            <div class="mdc-select__menu mdc-menu mdc-menu-surface demo-width-class">
+                                <ul class="mdc-list">
+                                    <li class="mdc-list-item"></li>
+                                    {% for year in 2005..2025 %}
+                                    <li class="mdc-list-item {% if product.season == year %}mdc-list-item--selected{% endif %}" data-value="{{ year }}">
+                                        {{ year }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <input type="hidden" class='input-select' {% if product.season %}value="{{ product.season }}"{% endif %} name="season">
+                        </div>
+                        <div class="mdc-select">
+                            <div class="mdc-select__anchor demo-width-class">
+                                <i class="mdc-select__dropdown-icon"></i>
+                                <div class="mdc-select__selected-text"></div>
+                                <span class="mdc-floating-label">Product Size</span>
+                                <div class="mdc-line-ripple"></div>
+                            </div>
+
+                            <div class="mdc-select__menu mdc-menu mdc-menu-surface demo-width-class">
+                                <ul class="mdc-list">
+                                    <li>
+                                        <input type="text" class="search-input" placeholder="&#xE8B6; Search"/>
+                                    </li>
+                                    <div class="searchable">
+                                        <li class="mdc-list-item"></li>
+                                        {% for size in sizes %}
+                                            <li class="mdc-list-item {% if product.size %}{% if product.size.id == size.id %}mdc-list-item--selected{% endif %}{% endif %}" data-value="{{ size.id }}">
+                                                {{ size.size }}
+                                            </li>
+                                        {% endfor%}
+                                    </div>
+                                </ul>
+                            </div>
+                            <input type="hidden" class='input-select' {% if product.size %}value="{{ product.size.id }}"{% endif %} name="size">
+                        </div>
+                        </div>
+                        <div class="line">
+                            <div class="mdc-select">
+                                <div class="mdc-select__anchor demo-width-class">
+                                    <i class="mdc-select__dropdown-icon"></i>
+                                    <div class="mdc-select__selected-text"></div>
+                                    <span class="mdc-floating-label">Product Color</span>
+                                    <div class="mdc-line-ripple"></div>
+                                </div>
+
+                                <div class="mdc-select__menu mdc-menu mdc-menu-surface demo-width-class">
+                                    <ul class="mdc-list">
+                                        <li>
+                                            <input type="text" class="search-input" placeholder="&#xE8B6; Search"/>
+                                        </li>
+                                        <div class="searchable">
+                                            <li class="mdc-list-item"></li>
+                                            {% for color in colors %}
+                                                <li class="mdc-list-item {% if product.color %}{% if product.color.id == color.id %}mdc-list-item--selected{% endif %}{% endif %}"  data-value="{{ color.id }}">
+                                                    {{ color.name }}
+                                                </li>
+                                            {% endfor%}
+                                        </div>
+                                    </ul>
+                                </div>
+                                <input type="hidden" class='input-select' {% if product.color %}value="{{ product.color.id }}"{% endif %} name="color">
+                            </div>
+                            <div class="mdc-select">
+                                <div class="mdc-select__anchor demo-width-class">
+                                    <i class="mdc-select__dropdown-icon"></i>
+                                    <div class="mdc-select__selected-text"></div>
+                                    <span class="mdc-floating-label">For Women</span>
+                                    <div class="mdc-line-ripple"></div>
+                                </div>
+
+                                <div class="mdc-select__menu mdc-menu mdc-menu-surface demo-width-class">
+                                    <ul class="mdc-list">
+                                        <li class="mdc-list-item"></li>
+                                        <li class="mdc-list-item {% if product.women == 'yes' %}mdc-list-item--selected{% endif %}" data-value="yes">Yes</li>
+                                    </ul>
+                                </div>
+                                <input type="hidden" class='input-select' {% if product.women == 'yes' %}value="yes"{% endif %} name="women">
+                            </div>
+                        </div>
+                        <div class="line">
+                            <div class="mdc-select">
+                                <div class="mdc-select__anchor demo-width-class">
+                                    <i class="mdc-select__dropdown-icon"></i>
+                                    <div class="mdc-select__selected-text"></div>
+                                    <span class="mdc-floating-label">For Men</span>
+                                    <div class="mdc-line-ripple"></div>
+                                </div>
+
+                                <div class="mdc-select__menu mdc-menu mdc-menu-surface demo-width-class">
+                                    <ul class="mdc-list">
+                                        <li class="mdc-list-item"></li>
+                                        <li class="mdc-list-item {% if product.men == 'yes' %}mdc-list-item--selected{% endif %}" data-value="yes">Yes</li>
+                                    </ul>
+                                </div>
+                                <input type="hidden" class='input-select' {% if product.men == 'yes' %}value="yes"{% endif %} name="men">
+                            </div>
+                            <div class="mdc-select">
+                                <div class="mdc-select__anchor demo-width-class">
+                                    <i class="mdc-select__dropdown-icon"></i>
+                                    <div class="mdc-select__selected-text"></div>
+                                    <span class="mdc-floating-label">For Boys</span>
+                                    <div class="mdc-line-ripple"></div>
+                                </div>
+
+                                <div class="mdc-select__menu mdc-menu mdc-menu-surface demo-width-class">
+                                    <ul class="mdc-list">
+                                        <li class="mdc-list-item"></li>
+                                        <li class="mdc-list-item {% if product.boys == 'yes' %}mdc-list-item--selected{% endif %}" data-value="yes" >Yes</li>
+                                    </ul>
+                                </div>
+                                <input type="hidden" class='input-select' {% if product.boys == 'yes' %}value="yes"{% endif %} name="boy">
+                            </div>
+                        </div>
+                        <div class="line">
+                            <div class="mdc-select">
+                                <div class="mdc-select__anchor demo-width-class">
+                                    <i class="mdc-select__dropdown-icon"></i>
+                                    <div class="mdc-select__selected-text"></div>
+                                    <span class="mdc-floating-label">For Girls</span>
+                                    <div class="mdc-line-ripple"></div>
+                                </div>
+
+                                <div class="mdc-select__menu mdc-menu mdc-menu-surface demo-width-class">
+                                    <ul class="mdc-list">
+                                        <li class="mdc-list-item"></li>
+                                        <li class="mdc-list-item {% if product.girls == 'yes' %}mdc-list-item--selected{% endif %}" data-value="yes">Yes</li>
+                                    </ul>
+                                </div>
+                                <input type="hidden" class='input-select' {% if product.girls == 'yes' %}value="yes"{% endif %} name="girl">
+                            </div>
+                            <div class="mdc-select">
+                                <div class="mdc-select__anchor demo-width-class">
+                                    <i class="mdc-select__dropdown-icon"></i>
+                                    <div class="mdc-select__selected-text"></div>
+                                    <span class="mdc-floating-label">For Unisex</span>
+                                    <div class="mdc-line-ripple"></div>
+                                </div>
+
+                                <div class="mdc-select__menu mdc-menu mdc-menu-surface demo-width-class">
+                                    <ul class="mdc-list">
+                                        <li class="mdc-list-item"></li>
+                                        <li class="mdc-list-item {% if product.unisex == 'yes' %}mdc-list-item--selected{% endif %}" data-value="yes">Yes</li>
+                                    </ul>
+                                </div>
+                                <input type="hidden" class='input-select' {% if product.unisex == 'yes' %}value="yes"{% endif %} name="unisex">
+                            </div>
+                        </div>
+                    </div>
+                <div class="line btn-form-container">
+                    <button class="mdc-button mdc-button--raised" type="submit">Submit</button>
+                    <button class="mdc-button mdc-button--outlined" type="reset">Reset</button>
+                </div>
+            </div>
+            <input type="hidden" name="product-id" value="{{ product.id }}">
+        </form>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('product') }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('productStyle') }}
+{% endblock %}

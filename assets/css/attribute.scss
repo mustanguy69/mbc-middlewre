@@ -1,0 +1,30 @@
+.mdc-tab-bar {
+  margin-bottom: 20px;
+}
+
+.mdc-data-table {
+  .attribute-edit, .attribute-delete, .attribute-edit-submit {
+    cursor: pointer;
+  }
+
+  .attribute-edit-input, .attribute-edit-code {
+    height: 20px;
+  }
+
+  .attribute-edit-submit {
+    vertical-align: middle;
+  }
+}
+
+.attribute-table {
+  display: none;
+}
+
+.form-add-attribute {
+  margin-bottom: 25px;
+  button {
+    height: 56px;
+    margin-left: 10px;
+    vertical-align: top;
+  }
+}

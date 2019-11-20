@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}M.B.C Middle-Ware{% endblock %}</title>
+        <link rel="shortcut icon" href="{{ asset('dist/img/favicon.ico') }}" type="image/x-icon">
+        <link rel="icon" href="{{ asset('dist/img/favicon.ico') }}" type="image/x-icon">
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+            <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+        {% endblock %}
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+            <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+        {% endblock %}
+    </head>
+    <body>
+        {% include 'menu.html.twig' %}
+        {% block body %}{% endblock %}
+        {% include 'notification.hml.twig' with {'text': ''} %}
+        {% include('loader.html.twig') %}
+        {{ render(controller('App\\Controller\\FrontendController::popupRexUpload')) }}
+    </body>
+</html>

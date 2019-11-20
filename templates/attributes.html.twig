@@ -1,0 +1,251 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container attributepage">
+        <div class="title">
+            <h2>Attributes</h2>
+        </div>
+        <hr>
+        <div class="mdc-tab-bar" role="tablist">
+            <div class="mdc-tab-scroller">
+                <div class="mdc-tab-scroller__scroll-area">
+                    <div class="mdc-tab-scroller__scroll-content">
+                        <button class="mdc-tab mdc-tab--active"  data-table="brands-table" id="brands-tab" role="tab" aria-selected="true" tabindex="0">
+                          <span class="mdc-tab__content">
+                            <span class="mdc-tab__text-label">Brands</span>
+                          </span>
+                            <span class="mdc-tab-indicator mdc-tab-indicator--active">
+                            <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                            </span>
+                            <span class="mdc-tab__ripple"></span>
+                        </button>
+                        <button class="mdc-tab" role="tab" data-table="suppliers-table" id="suppliers-tab" aria-selected="true" tabindex="0">
+                          <span class="mdc-tab__content">
+                            <span class="mdc-tab__text-label">Suppliers</span>
+                          </span>
+                            <span class="mdc-tab-indicator">
+                            <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                            </span>
+                            <span class="mdc-tab__ripple"></span>
+                        </button>
+                        <button class="mdc-tab" role="tab" data-table="types-table" aria-selected="true" tabindex="0">
+                          <span class="mdc-tab__content">
+                            <span class="mdc-tab__text-label">Product Types</span>
+                          </span>
+                            <span class="mdc-tab-indicator">
+                            <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                            </span>
+                            <span class="mdc-tab__ripple"></span>
+                        </button>
+                        <button class="mdc-tab" role="tab" data-table="sizes-table" aria-selected="true" tabindex="0">
+                          <span class="mdc-tab__content">
+                            <span class="mdc-tab__text-label">Sizes</span>
+                          </span>
+                            <span class="mdc-tab-indicator">
+                            <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                            </span>
+                            <span class="mdc-tab__ripple"></span>
+                        </button>
+                        <button class="mdc-tab" role="tab" data-table="colours-table" aria-selected="true" tabindex="0">
+                          <span class="mdc-tab__content">
+                            <span class="mdc-tab__text-label">Colours</span>
+                          </span>
+                            <span class="mdc-tab-indicator">
+                            <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                            </span>
+                            <span class="mdc-tab__ripple"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="brands-table attribute-table">
+            <div class="form-add-attribute">
+                <div class="mdc-text-field">
+                    <input type="text"  name="brand-attribute"  class="mdc-text-field__input">
+                    <label class="mdc-floating-label" for="my-text-field">Brand</label>
+                    <div class="mdc-line-ripple"></div>
+                </div>
+                <button class="mdc-button mdc-button--raised"><i class="material-icons">add_circle_outline</i> Add</button>
+            </div>
+
+            <div class="mdc-data-table">
+                <table class="mdc-data-table__table">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    {% for brand in brands %}
+                        <tr class="mdc-data-table__row">
+                            <td class="mdc-data-table__cell">{{ brand.id }}</td>
+                            <td class="mdc-data-table__cell">{{ brand.name }}</td>
+                            <td class="mdc-data-table__cell">
+                                <span class="attribute-edit" data-id="{{ brand.id }}" data-attribute="brand-attribute"><i class="material-icons">edit</i></span>
+                                <span class="attribute-delete" data-id="{{ brand.id }}" data-attribute="brand-attribute"><i class="material-icons">delete</i></span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="suppliers-table attribute-table">
+            <div class="form-add-attribute">
+                <div class="mdc-text-field">
+                    <input type="text"  id='supplier-code' class="mdc-text-field__input">
+                    <label class="mdc-floating-label" for="my-text-field">Supplier Code</label>
+                    <div class="mdc-line-ripple"></div>
+                </div>
+                <div class="mdc-text-field">
+                    <input type="text"  name="supplier-attribute"  class="mdc-text-field__input">
+                    <label class="mdc-floating-label" for="my-text-field">Supplier Name</label>
+                    <div class="mdc-line-ripple"></div>
+                </div>
+                <button class="mdc-button mdc-button--raised"><i class="material-icons">add_circle_outline</i> Add</button>
+            </div>
+            <div class="mdc-data-table">
+                <table class="mdc-data-table__table">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Code</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    {% for supplier in suppliers %}
+                        <tr class="mdc-data-table__row">
+                            <td class="mdc-data-table__cell">{{ supplier.id }}</td>
+                            <td class="mdc-data-table__cell">{{ supplier.code }}</td>
+                            <td class="mdc-data-table__cell">{{ supplier.name }}</td>
+                            <td class="mdc-data-table__cell">
+                                <span class="attribute-edit" data-id="{{ supplier.id }}" data-attribute="supplier-attribute"><i class="material-icons">edit</i></span>
+                                <span class="attribute-delete" data-id="{{ supplier.id }}" data-attribute="supplier-attribute"><i class="material-icons">delete</i></span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="types-table attribute-table">
+            <div class="form-add-attribute">
+                <div class="mdc-text-field">
+                    <input type="text"  name="type-attribute"  class="mdc-text-field__input">
+                    <label class="mdc-floating-label" for="my-text-field">Product Type</label>
+                    <div class="mdc-line-ripple"></div>
+                </div>
+                <button class="mdc-button mdc-button--raised"><i class="material-icons">add_circle_outline</i> Add</button>
+            </div>
+            <div class="mdc-data-table">
+                <table class="mdc-data-table__table">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    {% for type in types %}
+                        <tr class="mdc-data-table__row">
+                            <td class="mdc-data-table__cell">{{ type.id }}</td>
+                            <td class="mdc-data-table__cell">{{ type.name }}</td>
+                            <td class="mdc-data-table__cell">
+                                <span class="attribute-edit" data-id="{{ type.id }}" data-attribute="type-attribute"><i class="material-icons">edit</i></span>
+                                <span class="attribute-delete" data-id="{{ type.id }}" data-attribute="type-attribute"><i class="material-icons">delete</i></span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="sizes-table attribute-table">
+            <div class="form-add-attribute">
+                <div class="mdc-text-field">
+                    <input type="text"  name="size-attribute"  class="mdc-text-field__input">
+                    <label class="mdc-floating-label" for="my-text-field">Size</label>
+                    <div class="mdc-line-ripple"></div>
+                </div>
+                <button class="mdc-button mdc-button--raised"><i class="material-icons">add_circle_outline</i> Add</button>
+            </div>
+            <div class="mdc-data-table">
+                <table class="mdc-data-table__table">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    {% for size in sizes %}
+                        <tr class="mdc-data-table__row">
+                            <td class="mdc-data-table__cell">{{ size.id }}</td>
+                            <td class="mdc-data-table__cell">{{ size.size }}</td>
+                            <td class="mdc-data-table__cell">
+                                <span class="attribute-edit" data-id="{{ size.id }}" data-attribute="size-attribute"><i class="material-icons">edit</i></span>
+                                <span class="attribute-delete" data-id="{{ size.id }}" data-attribute="size-attribute"><i class="material-icons">delete</i></span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="colours-table attribute-table">
+            <div class="form-add-attribute">
+                <div class="mdc-text-field">
+                    <input type="text"  name="color-attribute"  class="mdc-text-field__input">
+                    <label class="mdc-floating-label" for="my-text-field">Color</label>
+                    <div class="mdc-line-ripple"></div>
+                </div>
+                <button class="mdc-button mdc-button--raised"><i class="material-icons">add_circle_outline</i> Add</button>
+            </div>
+            <div class="mdc-data-table">
+                <table class="mdc-data-table__table">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    {% for color in colors %}
+                        <tr class="mdc-data-table__row">
+                            <td class="mdc-data-table__cell">{{ color.id }}</td>
+                            <td class="mdc-data-table__cell">{{ color.name }}</td>
+                            <td class="mdc-data-table__cell">
+                                <span class="attribute-edit" data-id="{{ color.id }}" data-attribute="color-attribute"><i class="material-icons">edit</i></span>
+                                <span class="attribute-delete" data-id="{{ color.id }}" data-attribute="color-attribute"><i class="material-icons">delete</i></span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('attribute') }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('attributeStyle') }}
+{% endblock %}
