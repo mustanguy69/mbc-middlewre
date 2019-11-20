@@ -204,13 +204,14 @@ class ShopifyController extends AbstractController
      * Call Shopify API for getting options of all variants products
      * @Route("/getAllProductVariantOptions", name="getAllProductVariantOptions")
      */
-    function getAllProductVariantOptions() {
+    function getAllProductVariantOptions(Request $request) {
         $variantsArray = [];
+        $collectionId = $request->request->get('collectionId');
         try {
             $client = HttpClient::create();
-            $response = $client->request('GET', shopifyApiurl . 'products.json?collection_id=156123136131&limit=250&fields=variants');
+            $response = $client->request('GET', shopifyApiurl . 'products.json?collection_id='. $collectionId .'&limit=250&fields=variants');
             $client = HttpClient::create();
-            $countRequest = $client->request('GET', shopifyApiurl . 'products/count.json?collection_id=156123136131');
+            $countRequest = $client->request('GET', shopifyApiurl . 'products/count.json?collection_id=' . $collectionId);
             $countContent = json_decode($countRequest->getContent(), true);
             $count = $countContent['count'];
             $variantsArray[] = json_decode($response->getContent(), true);
