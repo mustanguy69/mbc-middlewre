@@ -206,7 +206,7 @@ class ShopifyController extends AbstractController
      */
     function getAllProductVariantOptions(Request $request) {
         $variantsArray = [];
-        $collectionId = $request->request->get('collectionId');
+        $collectionId = $request->query->get('collectionId');
         try {
             $client = HttpClient::create();
             $response = $client->request('GET', shopifyApiurl . 'products.json?collection_id='. $collectionId .'&limit=250&fields=variants');
