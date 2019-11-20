@@ -14,6 +14,10 @@ use Psr\Log\LoggerInterface;
 
 const shopifyApiurl = "https://4bcd1fe009483d29119dd1af3e4b320c:c4d1b483afde579d19810953287548da@bikes-com-au.myshopify.com/admin/api/2019-10/";
 
+/**
+ * Call Shopify API for add/update image products
+ * @Route("/api")
+ */
 class ShopifyController extends AbstractController
 {
 
