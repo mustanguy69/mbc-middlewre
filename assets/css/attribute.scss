@@ -3,11 +3,6 @@
 }
 
 .mdc-data-table {
-  display: block;
-  margin-bottom: 50px;
-  tbody tr:nth-child(odd) {
-    background-color: #F5F5F5;
-  }
   .attribute-edit, .attribute-delete, .attribute-edit-submit {
     cursor: pointer;
   }

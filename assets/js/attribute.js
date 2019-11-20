@@ -1,4 +1,16 @@
+import {MDCDataTable} from '@material/data-table'
+import {MDCTabBar} from '@material/tab-bar';
+
 $(document).ready(function () {
+
+    const tabBar = [].map.call(document.querySelectorAll('.mdc-tab-bar'), function (el) {
+        return new MDCTabBar(el)
+    });
+
+    const dataTable = [].map.call(document.querySelector('.mdc-data-table'), function (el) {
+        return new MDCDataTable(el);
+    });
+
     if(location.hash) {
         $('.mdc-tab[data-table='+ location.hash.substring(1) +']').get(0).click();
         $('.' + location.hash.substring(1)).show();
@@ -40,7 +52,7 @@ $(document).ready(function () {
            }
 
             $.ajax({
-                url: 'addUpdateAttribute',
+                url: 'addUpdateAttributeBdd',
                 type: 'POST',
                 data: {
                     'attributeXml': xml,
@@ -79,12 +91,12 @@ $(document).ready(function () {
                             '</td>' +
                             '</tr>');
                     }
-                    snackbar.open();
                     $('.mdc-snackbar__label').empty().text('Attribute Added !');
+                    snackbar.open();
                 }, error: function () {
                     $(".loader-overlay").css('display', 'none');
-                    snackbar.open();
                     $('.mdc-snackbar__label').empty().text('An error happened, try again');
+                    snackbar.open();
                 }
             })
         }
@@ -96,7 +108,7 @@ $(document).ready(function () {
         var tr = $(this).parent().parent();
 
         $.ajax({
-            url: 'removeAttribute',
+            url: 'removeAttributeBdd',
             type: 'POST',
             data: {
                 'attributeType': attributeType,
@@ -108,14 +120,15 @@ $(document).ready(function () {
             success: function (data, status) {
                 $(".loader-overlay").css('display', 'none');
                 tr.remove();
-                $('.mdc-data-table').prepend('<span class="mdc-theme--error">Hint : You have to remove the attribute from REX as well !</span>')
+                $('.mdc-data-table').prepend('<span class="mdc-theme--error" style="text-align: center">Hint : You have to remove the attribute from REX as well !</span>')
                 setTimeout(function() { $(".mdc-theme--error").remove(); }, 9000)
-                snackbar.open();
+
                 $('.mdc-snackbar__label').empty().text('Attribute Removed !');
+                snackbar.open();
             }, error: function () {
                 $(".loader-overlay").css('display', 'none');
-                snackbar.open();
                 $('.mdc-snackbar__label').empty().text('An error happened, try again');
+                snackbar.open();
             }
         })
     });
@@ -167,7 +180,7 @@ $(document).ready(function () {
         }
 
         $.ajax({
-            url: 'addUpdateAttribute',
+            url: 'addUpdateAttributeBdd',
             type: 'POST',
             data: {
                 'attributeType': attributeType,
@@ -189,13 +202,12 @@ $(document).ready(function () {
                 if($('.attribute-edit-code').val()) {
                     $('.edit-attribute-form-code').replaceWith($('.attribute-edit-code').val());
                 }
-
-                snackbar.open();
                 $('.mdc-snackbar__label').empty().text('Attribute Updated !');
+                snackbar.open();
             }, error: function () {
                 $(".loader-overlay").css('display', 'none');
-                snackbar.open();
                 $('.mdc-snackbar__label').empty().text('An error happened, try again');
+                snackbar.open();
             }
         })
     });

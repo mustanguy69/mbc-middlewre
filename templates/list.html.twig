@@ -2,39 +2,47 @@
 
 {% block body %}
     <div class="container listpage">
-        <input type="text" id="search" placeholder="search"/>
+        <div class="title">
+            <h2>Products list</h2>
+        </div>
+        <hr>
         <div class="list-container">
-            {% for product in products %}
-                {% for item in product %}
-                    <ul>
-                        <li>{{ item.id }}</li>
-                    </ul>
-                {% endfor %}
-            {% endfor %}
+            <div class="list-product-table">
+                <a class="mdc-button mdc-button--raised" href="{{ path('exportExcelMassUpload') }}" style="text-align: center">Download excel file for REX mass upload</a>
+                <div class="mdc-data-table">
+                    <table class="mdc-data-table__table">
+                        <thead>
+                            <tr class="mdc-data-table__header-row">
+                                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Image</th>
+                                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
+                                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">SKU</th>
+                                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Barcode</th>
+                                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Price</th>
+                                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">On Shopify</th>
+                                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Exported to rex</th>
+                            </tr>
+                        </thead>
+                        <tbody class="mdc-data-table__content">
+                            {% for product in products %}
+                                <tr class="mdc-data-table__row" style='cursor: pointer' data-url="{{ path('updateProduct', {'id': product.id}) }}">
+                                    <td class="mdc-data-table__cell"><img style="width: 60px; vertical-align: middle; padding: 2px" src="{% if product.images[0] is defined %}{{ product.images[0].src }}{% else %}{{ asset('dist/img/no-image.png') }}{% endif %}" /></td>
+                                    <td class="mdc-data-table__cell">{{ product.title }}</td>
+                                    <td class="mdc-data-table__cell">{{ product.sku }}</td>
+                                    <td class="mdc-data-table__cell">{{ product.barcode }}</td>
+                                    <td class="mdc-data-table__cell">${{ product.price }}</td>
+                                    <td class="mdc-data-table__cell">{{ product.syncWithShopify ? 'Yes' : 'No' }}</td>
+                                    <td class="mdc-data-table__cell">{{ product.massUploadedRex ? 'Yes' : 'No'  }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
-
     <script>
-        $(document).ready(function (e) {
-            var value = '';
-           $('#search').on('keydown', function () {
-               value = $(this).val();
-               if (value.length > 3) {
-                   $.ajax({
-                       type: "GET",
-                       url: '{{ path('getProductsByTitle') }}',
-                       data: {
-                         title: value,
-                       },
-                       success: function (data) {
-                           console.log(data);
-                       },
-                       error: function (XMLHttpRequest, textStatus, errorThrown) {
-                           alert('Error : ' + errorThrown);
-                       }
-                   });
-               }
-           })
+        $('.mdc-data-table__row').on('click', function (e) {
+           window.location = $(this).data('url');
         });
     </script>
 {% endblock %}

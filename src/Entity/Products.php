@@ -141,6 +141,31 @@ class Products
      */
     private $toShopify;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $massUploadedRex;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $shopifyProductId;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $shopifyVariantId;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default":"0"})
+     */
+    private $syncWithShopify;
+
+    /**
+     * @ORM\Column(type="datetime", length=255, nullable=true)
+     */
+    private $updatedAt;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
@@ -457,4 +482,94 @@ class Products
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getMassUploadedRex()
+    {
+        return $this->massUploadedRex;
+    }
+
+    /**
+     * @param mixed $massUploadedRex
+     * @return Products
+     */
+    public function setMassUploadedRex(bool $massUploadedRex): self
+    {
+        $this->massUploadedRex = $massUploadedRex;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShopifyProductId()
+    {
+        return $this->shopifyProductId;
+    }
+
+    /**
+     * @param mixed $shopifyProductId
+     */
+    public function setShopifyProductId($shopifyProductId): void
+    {
+        $this->shopifyProductId = $shopifyProductId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShopifyVariantId()
+    {
+        return $this->shopifyVariantId;
+    }
+
+    /**
+     * @param mixed $shopifyVariantId
+     */
+    public function setShopifyVariantId($shopifyVariantId): void
+    {
+        $this->shopifyVariantId = $shopifyVariantId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSyncWithShopify()
+    {
+        return $this->syncWithShopify;
+    }
+
+    /**
+     * @param mixed $syncWithShopify
+     * @return Products
+     */
+    public function setSyncWithShopify(bool $syncWithShopify): self
+    {
+        $this->syncWithShopify = $syncWithShopify;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param mixed $updatedAt
+     * @return Products
+     */
+    public function setUpdatedAt($updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
 }

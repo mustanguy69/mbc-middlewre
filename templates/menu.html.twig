@@ -5,23 +5,23 @@
         </i>
         Home
     </a>
-    <a href="{{ path('createProductsPage') }}">
-        <i class="material-icons">
-            add_circle_outline
-        </i>
-        Add Products
-    </a>
     <a href="{{ path('listProductsShopify') }}">
         <i class="material-icons">
             list
         </i>
         Lists Products
     </a>
-    <a href="" target="_blank">
+    <a href="{{ path('createProductsPage') }}">
+        <i class="material-icons">
+            add_circle_outline
+        </i>
+        Add Products
+    </a>
+    <a href="{{ path('excelBulkImportPage') }}">
         <i class="material-icons">
             import_export
         </i>
-        Import/Export Status
+        Excel Bulk Import
     </a>
     <a href="{{ path('attributesPage') }}">
         <i class="material-icons">

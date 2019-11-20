@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container listpage">
+        <div class="title">
+            <h2>Excel bulk import</h2>
+        </div>
+        <hr>
+        <div class="list-container bulk-export">
+            <a href="{{ path('downloadtemplate') }}">Download template</a>
+            <input type="file" id="file" name="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+            <button class="mdc-button mdc-button--raised"><i class="material-icons">send</i>  Import</button>
+        </div>
+
+        <div class="list-container">
+            <div class="list-product-table">
+                <div class="mdc-data-table">
+                    <table class="mdc-data-table__table">
+                        <thead>
+                        <tr class="mdc-data-table__header-row">
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Date</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">File</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Status</th>
+                        </tr>
+                        </thead>
+                        <tbody class="mdc-data-table__content">
+                        {% for bulkImport in bulkImports %}
+                            <tr class="mdc-data-table__row">
+                                <td class="mdc-data-table__cell">{{ bulkImport.date|date("m/d/Y H:i:s") }}</td>
+                                <td class="mdc-data-table__cell"><a href="{{ path('downloadFileBulkImport', {'file': bulkImport.fileName}) }}">{{ bulkImport.fileName }}</a></td>
+                                <td class="mdc-data-table__cell">{{ bulkImport.status }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $('button').on('click', function (e) {
+            var property = document.getElementById('file').files[0];
+            var form_data = new FormData();
+            form_data.append("file", property);
+            if(property) {
+                $.ajax({
+                    url: '{{ path('uploadBulkImport') }}',
+                    type: 'POST',
+                    data: form_data,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    beforeSend: function () {
+                        return confirm("Are you sure?");
+                    },
+                    success: function (data, status) {
+
+                        // $('.mdc-snackbar__label').empty().text('Products updated !');
+                        // snackbar.open();
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}

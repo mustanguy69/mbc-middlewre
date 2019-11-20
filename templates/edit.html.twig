@@ -2,10 +2,11 @@
 
 {% block body %}
     <div class="container createpage">
-        <form method="POST" action="" id="create-form">
+        <form method="POST" action="{{ path('updateProductBdd') }}" id="edit-form">
             <div class="list-container">
                 <div class="title">
                     <h2>Update a product</h2>
+                    <p>Update a product</p>
                     <div class="switch">
                         <label for="another-basic-switch">Add on Shopify</label>
                         <div class="mdc-switch mdc-switch--checked">
@@ -85,7 +86,7 @@
                         </div>
                         <div class="line">
                             <div class="mdc-text-field mdc-text-field--textarea">
-                                <textarea id="textarea" name="description" class="mdc-text-field__input" rows="8" cols="40"></textarea>
+                                <textarea id="textarea" name="description" class="mdc-text-field__input" rows="8" cols="40">{{ product.description }}</textarea>
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
@@ -128,7 +129,7 @@
                                 </div>
                                 <input type="hidden" class="input-tag" value="{{ product.tags }}" name="tags">
                                 {% set tags = product.tags|split(',') %}
-                                {% if tags|length > 0  %}
+                                {% if product.tags|length != 0 %}
                                     {% for tag in tags %}
                                         <span class="tag">
                                             <span class="remove-tag" data-value="{{ tag }}"><i class="material-icons">close</i></span>{{ tag }}
@@ -175,13 +176,26 @@
                         <button class="file-upload-btn" type="button" >Add Images</button>
 
                         <div class="image-upload-wrap">
-                            <input class="file-upload-input" type='file'  accept="image/*" multiple/>
+                            <input class="file-upload-input" name="base64Image" type='file'  accept="image/*" multiple/>
                             <div class="drag-text">
                                 <h3>Drag and drop a file or select add Images</h3>
                             </div>
                         </div>
                         <div class="file-upload-content">
-
+                            {% if product.images|length != 0 %}
+                                <script>
+                                    $('.image-upload-wrap').hide();
+                                    $('.file-upload-content').show();
+                                </script>
+                                {% for image in product.images %}
+                                    <div class="img-container img-container-{{ loop.index - 1 }}" data-name="{{ image.id }}">
+                                        <button type="button" data-name="{{ image.id }}" class="remove-image"><i class="material-icons">close</i></button>
+                                        <img class="file-upload-image" data-name="{{ image.id }}" src="{{ image.src }}"/>
+                                        <input type="text" style="width:99%" placeholder="name" value="{{ image.name }}" name="base64ImageNameUploaded[]" disabled/>
+                                        <input type="hidden" class='file-upload-input-hidden-uploaded' data-name="{{ image.id }}" name="base64ImageUploaded[]" value="{{ image.id }}"/>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
                         </div>
                     </div>
                     <div class="line">
@@ -360,16 +374,8 @@
                     <button class="mdc-button mdc-button--outlined" type="reset">Reset</button>
                 </div>
             </div>
+            <input type="hidden" name="product-id" value="{{ product.id }}">
         </form>
-        <script>
-            {% if status == 'success' %}
-            snackbar.open();
-            $('.mdc-snackbar__label').text('Product well updated !');
-            {% elseif status == 'error' %}
-            snackbar.open();
-            $('.mdc-snackbar__label').text('\'Something wrong happened, try again');
-            {% endif %}
-        </script>
     </div>
 {% endblock %}
 

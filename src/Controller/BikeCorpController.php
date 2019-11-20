@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Controller\RexSoapController;
 use App\Controller\ShopifyController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Psr\Log\LoggerInterface;
@@ -25,6 +26,7 @@ class BikeCorpController extends AbstractController
         $today = $today->format('Y-m-d H:i:s');
         $matchingForRex = "";
         $brands = [];
+
         foreach ($bikeCorpXml[0] as $product) {
             if ($product->brand != '') {
                 $brands[] = $product->brand;

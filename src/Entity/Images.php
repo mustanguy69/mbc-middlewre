@@ -22,6 +22,16 @@ class Images
     private $src;
 
     /**
+     * @ORM\Column(type="text")
+     */
+    private $name;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $shopifyId;
+
+    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Products", inversedBy="images")
      */
     private $products;
@@ -39,6 +49,34 @@ class Images
     public function setSrc(string $src): self
     {
         $this->src = $src;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShopifyId(): ?string
+    {
+        return $this->shopifyId;
+    }
+
+
+    public function setShopifyId(string $shopifyId): self
+    {
+        $this->shopifyId = $shopifyId;
 
         return $this;
     }

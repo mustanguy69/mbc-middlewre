@@ -18,8 +18,8 @@ import {MDCSelect} from '@material/select';
 import {MDCSwitch} from '@material/switch';
 import {MDCRipple} from '@material/ripple';
 import {MDCSnackbar} from '@material/snackbar';
-import {MDCTabBar} from '@material/tab-bar';
-import {MDCDataTable} from '@material/data-table';
+
+
 
 $(document).ready(function (e) {
     const textFields = [].map.call(document.querySelectorAll('.mdc-text-field'), function(el) {
@@ -45,12 +45,5 @@ $(document).ready(function (e) {
 
     global.snackbar = new MDCSnackbar(document.querySelector('.mdc-snackbar'));
 
-    const tabBar = [].map.call(document.querySelectorAll('.mdc-tab-bar'), function (el) {
-        return new MDCTabBar(el)
-    });
-
-    const dataTable = [].map.call(document.querySelector('.mdc-data-table'), function (el) {
-        return new MDCDataTable(el);
-    });
 });
 
