@@ -211,6 +211,7 @@ class ShopifyController extends AbstractController
     function getAllProductVariantOptions(Request $request) {
         $variantsArray = [];
         $collectionId = $request->query->get('collectionId');
+        $arr = [];
         try {
             $client = HttpClient::create();
             $response = $client->request('GET', shopifyApiurl . 'products.json?collection_id='. $collectionId .'&limit=250&fields=variants');
@@ -219,8 +220,8 @@ class ShopifyController extends AbstractController
             $countContent = json_decode($countRequest->getContent(), true);
             $count = $countContent['count'];
             $variantsArray[] = json_decode($response->getContent(), true);
-            $paginationLink = $response->getHeaders()['link'];
-            if(count($paginationLink) > 0) {
+            if(array_key_exists('link', $response->getHeaders())) {
+                $paginationLink = $response->getHeaders()['link'];
                 $occurence = floor(($count / 250));
                 for($i = 1; $i <= $occurence; $i++) {
                     $result = $this->paginationRequest($paginationLink);
@@ -231,7 +232,6 @@ class ShopifyController extends AbstractController
                 }
             }
 
-            $arr = [];
             foreach ($variantsArray as $variants) {
                 foreach ($variants['products'] as $variant) {
                     foreach ($variant['variants'] as $idk) {
