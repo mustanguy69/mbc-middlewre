@@ -232,6 +232,8 @@ class ShopifyController extends AbstractController
                 }
             }
 
+            $colorsArr = [];
+            $sizeArr = [];
             foreach ($variantsArray as $variants) {
                 foreach ($variants['products'] as $variant) {
                     foreach ($variant['variants'] as $idk) {
