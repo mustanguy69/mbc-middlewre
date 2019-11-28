@@ -438,7 +438,7 @@ class ShopifyController extends AbstractController
 
         $customerId = $request->request->get('customerId');
         $productId = $request->request->get('productId');
-        $wishlist = $this->getMetafieldCustomer($customerId,'wishlist');
+        $wishlist = $this->getMetafieldCustomer($customerId,'');
         $wishlistDecoded = json_decode($wishlist, true);
         $productIds = '';
         if(count($wishlistDecoded['metafields']) !== 0) {
@@ -478,7 +478,7 @@ class ShopifyController extends AbstractController
             $data = [
                 "metafield" => [
                     "namespace" => "wishlist",
-                    "key" => "products",
+                    "key" => "wishlist-products",
                     "value" => '' . $productId . '',
                     "value_type" => 'string',
                 ]
@@ -508,7 +508,7 @@ class ShopifyController extends AbstractController
 
         $customerId = $request->request->get('customerId');
         $productIdToDelete = $request->request->get('productId');
-        $wishlist = $this->getMetafieldCustomer($customerId,'wishlist');
+        $wishlist = $this->getMetafieldCustomer($customerId,'wishlist-products');
         $wishlistDecoded = json_decode($wishlist, true);
         $productIds = '';
         if(count($wishlistDecoded['metafields']) !== 0) {
@@ -545,6 +545,27 @@ class ShopifyController extends AbstractController
                     var_dump($e);
                 }
             }
+        }
+
+        return new Response('wishlist saved');
+    }
+
+    /**
+     * Call Shopify API for removing product form metafield wishlist
+     * @Route("/removeWishlist")
+     * @return mixed
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
+    function removeWishlist(Request $request) {
+
+        try {
+            $client = HttpClient::create();
+            $response = $client->request('DELETE', shopifyApiurl . 'metafields/11391895240835.json');
+        } catch (\Exception $e) {
+            var_dump($e);
         }
 
         return new Response('wishlist saved');
