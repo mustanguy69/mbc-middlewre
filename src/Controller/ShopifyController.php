@@ -434,8 +434,10 @@ class ShopifyController extends AbstractController
      * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
-    function setMetafieldWishlist($customerId, $productId ) {
+    function setMetafieldWishlist(Request $request) {
 
+        $customerId = $request->request->get('customerId');
+        $productId = $request->request->get('productId');
         $wishlist = $this->getMetafieldCustomer($customerId,'wishlist');
         $wishlistDecoded = json_decode($wishlist, true);
         $productIds = '';
@@ -468,7 +470,6 @@ class ShopifyController extends AbstractController
                 try {
                     $client = HttpClient::create();
                     $response = $client->request('PUT', shopifyApiurl . 'metafields/'.$wishlistDecoded['metafields'][0]['id'].'.json', ['json' => $data]);
-                    dump($response->getContent());exit;
                 } catch (\Exception $e) {
                     var_dump($e);
                 }
@@ -476,8 +477,8 @@ class ShopifyController extends AbstractController
         } else {
             $data = [
                 "metafield" => [
-                    "namespace" => "inventory",
-                    "key" => "wishlist",
+                    "namespace" => "wishlist",
+                    "key" => "products",
                     "value" => '' . $productId . '',
                     "value_type" => 'string',
                 ]
@@ -503,8 +504,10 @@ class ShopifyController extends AbstractController
      * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
-    function removeProductFromWishlist($customerId = 2676268924988, $productIdToDelete = '123') {
+    function removeProductFromWishlist(Request $request) {
 
+        $customerId = $request->request->get('customerId');
+        $productIdToDelete = $request->request->get('productId');
         $wishlist = $this->getMetafieldCustomer($customerId,'wishlist');
         $wishlistDecoded = json_decode($wishlist, true);
         $productIds = '';
@@ -547,7 +550,7 @@ class ShopifyController extends AbstractController
         return new Response('wishlist saved');
     }
 
-    
+
     function replaceSpecialCharacters($string) {
 
         return str_replace(array('&', '-', '\t', '"', '  ', '/', '+', "'"), array('%26', '%2D', '', '', ' ', '%2F', '%2B', ''), $string);
