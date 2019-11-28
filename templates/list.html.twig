@@ -9,6 +9,12 @@
         <div class="list-container">
             <div class="list-product-table">
                 <a class="mdc-button mdc-button--raised" href="{{ path('exportExcelMassUpload') }}" style="text-align: center">Download excel file for REX mass upload</a>
+                <div class="mdc-text-field">
+                    <input type="search" class="search-input mdc-text-field__input"/>
+                    <label class="mdc-floating-label" for="my-text-field"><i class="material-icons">search</i> Search by SKU or Name</label>
+                    <div class="mdc-line-ripple"></div>
+                </div>
+
                 <div class="mdc-data-table">
                     <table class="mdc-data-table__table">
                         <thead>
@@ -23,7 +29,7 @@
                             </tr>
                         </thead>
                         <tbody class="mdc-data-table__content">
-                            {% for product in products %}
+                            {% for product in pagination.items %}
                                 <tr class="mdc-data-table__row" style='cursor: pointer' data-url="{{ path('updateProduct', {'id': product.id}) }}">
                                     <td class="mdc-data-table__cell"><img style="width: 60px; vertical-align: middle; padding: 2px" src="{% if product.images[0] is defined %}{{ product.images[0].src }}{% else %}{{ asset('dist/img/no-image.png') }}{% endif %}" /></td>
                                     <td class="mdc-data-table__cell">{{ product.title }}</td>
@@ -39,10 +45,32 @@
                 </div>
             </div>
         </div>
+        {{ knp_pagination_render(pagination, 'pagination.html.twig') }}
     </div>
     <script>
         $('.mdc-data-table__row').on('click', function (e) {
            window.location = $(this).data('url');
+        });
+        var urlParams = new URLSearchParams(window.location.search);
+        if(urlParams.has('term') && urlParams.get('term') !== '') {
+            $('.search-input').val(urlParams.get('term'));
+        }
+
+        $('.search-input').on('keyup', function (e) {
+            val = $(this).val();
+           $.ajax({
+               url: '{{ path('listProducts') }}',
+               method: 'GET',
+               data: {'term': val},
+               success: function (data) {
+                   var result = $(data).filter('.container');
+                   table = $(result).find('.mdc-data-table__table');
+                   $('.mdc-data-table').empty().html(table);
+
+                   pagination = $(result).find('.pagination').html();
+                   $('.pagination').empty().html(pagination);
+               }
+           })
         });
     </script>
 {% endblock %}

@@ -84,7 +84,6 @@ class RexToShopifyController extends AbstractController
 
 
     /**
-     * mass upload done
      * @Route("rex/shopify/synced", name="detectIfShopifySynced")
      *
      */

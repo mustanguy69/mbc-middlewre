@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Products;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,15 +27,23 @@ class FrontendController extends AbstractController
 
     /**
      * List shopify products page
-     * @Route("product/list", name="listProductsShopify")
+     * @Route("product/list", name="listProducts")
      *
      */
-    public function listProductsShopify() {
+    public function listProductsShopify(PaginatorInterface $paginator, Request $request) {
 
+        $term = $request->query->get('term');
         $em = $this->getDoctrine()->getManager();
-        $products = $em->getRepository('App:Products')->findAll();
+        $repository = $em->getRepository('App:Products');
+        $qb = $repository->getWithSearchQueryBuilder($term);
 
-        return $this->render('list.html.twig', ['products' => $products]);
+        $pagination = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            30
+        );
+
+        return $this->render('list.html.twig', ['pagination' => $pagination]);
 
     }
 

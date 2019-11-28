@@ -311,20 +311,26 @@ class BddController extends AbstractController
             $status = 'success';
         }
 
+        $tags = '';
+        $tags .= $product->getTags();
+
         if($product->getColor()) {
             $productColor = $product->getColor()->getName();
+            $tags .= ','.$productColor;
         } else {
             $productColor = "CLEAR DATA";
         }
 
         if($product->getSize()) {
             $productSize = $product->getSize()->getSize();
+            $tags .= ','.$productSize;
         } else {
             $productSize = "CLEAR DATA";
         }
 
         if($product->getSeason()) {
             $productSeason = $product->getSeason();
+            $tags .= ','.$productSeason;
         } else {
             $productSeason = "CLEAR DATA";
         }
@@ -374,7 +380,7 @@ class BddController extends AbstractController
                 $jsonProduct = [
                     "product" => [
                         "id" => $productId,
-                        "tags" => $product->getTags()
+                        "tags" => $tags,
                     ]
                 ];
 

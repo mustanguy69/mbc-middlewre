@@ -224,7 +224,7 @@ class ShopifyController extends AbstractController
                 $paginationLink = $response->getHeaders()['link'];
                 $occurence = floor(($count / 250));
                 for($i = 1; $i <= $occurence; $i++) {
-                    $result = $this->paginationRequest($paginationLink);
+                    $result = $this->paginationRequestVariants($paginationLink);
                     if ($result != false) {
                         $variantsArray[] = json_decode($result->getContent(), true);
                         $paginationLink = $result->getHeaders()['link'];
@@ -255,7 +255,7 @@ class ShopifyController extends AbstractController
         return new JsonResponse($arr);
     }
 
-    function paginationRequest($paginationLink) {
+    function paginationRequestVariants($paginationLink) {
         $paginationLinkArr = explode('; ', $paginationLink[0]);
         $url = '';
         if($paginationLinkArr[1] == 'rel="next"') {
@@ -341,6 +341,213 @@ class ShopifyController extends AbstractController
         return new Response($response->getContent());
     }
 
+    /**
+     * Call Shopify API for removing all products
+     * @Route("/removeAllProducts", name="removeAllProducts")
+     */
+    function removeAllProducts() {
+        ini_set('max_execution_time', 0);
+        try {
+            $productsContent = [];
+            $client = HttpClient::create();
+            $productsRequest = $client->request('GET', shopifyApiurl . 'products.json?limit=250&fields=id');
+            $productsContent[] = json_decode($productsRequest->getContent(), true);
+            $client = HttpClient::create();
+            $countRequest = $client->request('GET', shopifyApiurl . 'products/count.json');
+            $countContent = json_decode($countRequest->getContent(), true);
+            $count = $countContent['count'];
+
+            if(array_key_exists('link', $productsRequest->getHeaders())) {
+                $paginationLink = $productsRequest->getHeaders()['link'];
+                $occurence = floor(($count / 250));
+                for($i = 1; $i <= $occurence; $i++) {
+                    $result = $this->paginationRequestProducts($paginationLink);
+                    if ($result != false) {
+                        $productsContent[] = json_decode($result->getContent(), true);
+                        $paginationLink = $result->getHeaders()['link'];
+                    }
+                }
+            }
+            foreach ($productsContent as $productId) {
+                foreach ($productId['products'] as $id) {
+                    $client = HttpClient::create();
+                    $productsDelete = $client->request('DELETE', shopifyApiurl . 'products/'.$id['id'].'.json');
+                }
+            }
+
+        } catch (\Exception $e) {
+            var_dump($e);
+        }
+
+        return new Response('finish');
+    }
+
+    function paginationRequestProducts($paginationLink) {
+        $paginationLinkArr = explode('; ', $paginationLink[0]);
+        $url = '';
+        if($paginationLinkArr[1] == 'rel="next"') {
+            $url = $paginationLinkArr[0];
+        } elseif ($paginationLinkArr[2] == 'rel="next"') {
+            $url = str_replace('rel="previous", ', '', $paginationLinkArr[1]);
+        }
+
+        if ($url !== '') {
+            $paginationLinkNext = str_replace('<', '', $url);
+            $paginationLinkNext = str_replace('>', '', $paginationLinkNext);
+            $parts = parse_url($paginationLinkNext);
+            parse_str($parts['query'], $query);
+            $client = HttpClient::create();
+            $response = $client->request('GET', shopifyApiurl . '/products.json?limit=250&&fields=id&page_info='.$query['page_info']);
+
+            return $response;
+        }
+    }
+
+    /**
+     * Call Shopify API for getting metafield customer
+     * @Route("/getMetafieldCustomer")
+     * @return mixed
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
+    function getMetafieldCustomer($customerId, $key) {
+
+        try {
+            $client = HttpClient::create();
+            $response = $client->request('GET', shopifyApiurl . 'customers/'.$customerId.'/metafields.json?key='.$key);
+        } catch (\Exception $e) {
+            var_dump($e);
+        }
+
+        return $response->getContent();
+    }
+
+
+    /**
+     * Call Shopify API for setting metafield wishlist
+     * @Route("/setMetafieldWishlist")
+     * @return mixed
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
+    function setMetafieldWishlist($customerId, $productId ) {
+
+        $wishlist = $this->getMetafieldCustomer($customerId,'wishlist');
+        $wishlistDecoded = json_decode($wishlist, true);
+        $productIds = '';
+        if(count($wishlistDecoded['metafields']) !== 0) {
+            if($wishlistDecoded['metafields'][0]['value'] !== "") {
+                if(strpos($wishlistDecoded['metafields'][0]['value'], ',') !== false) {
+                    $productIdTab = explode(',' , $wishlistDecoded['metafields'][0]['value']);
+                    foreach ($productIdTab as $value) {
+                        if($value !== "null") {
+                            $productIds .= ',' . $value;
+                        }
+                    }
+                } else {
+                    if($wishlistDecoded['metafields'][0]['value'] === "null") {
+                        $productIds = $productId;
+                    } else {
+                        $productIds = $wishlistDecoded['metafields'][0]['value'] .',' . $productId;
+                    }
+
+                }
+
+                $data = [
+                    "metafield" => [
+                        "id" => $wishlistDecoded['metafields'][0]['id'],
+                        "value" => '' . $productIds . '',
+                        "value_type" => 'string',
+                    ]
+                ];
+
+                try {
+                    $client = HttpClient::create();
+                    $response = $client->request('PUT', shopifyApiurl . 'metafields/'.$wishlistDecoded['metafields'][0]['id'].'.json', ['json' => $data]);
+                    dump($response->getContent());exit;
+                } catch (\Exception $e) {
+                    var_dump($e);
+                }
+            }
+        } else {
+            $data = [
+                "metafield" => [
+                    "namespace" => "inventory",
+                    "key" => "wishlist",
+                    "value" => '' . $productId . '',
+                    "value_type" => 'string',
+                ]
+            ];
+
+            try {
+                $client = HttpClient::create();
+                $response = $client->request('POST', shopifyApiurl . 'customers/'.$customerId.'/metafields.json', ['json' => $data]);
+            } catch (\Exception $e) {
+                var_dump($e);
+            }
+        }
+
+        return new Response('wishlist saved');
+    }
+
+    /**
+     * Call Shopify API for removing product form metafield wishlist
+     * @Route("/removeProductFromWishlist")
+     * @return mixed
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
+    function removeProductFromWishlist($customerId = 2676268924988, $productIdToDelete = '123') {
+
+        $wishlist = $this->getMetafieldCustomer($customerId,'wishlist');
+        $wishlistDecoded = json_decode($wishlist, true);
+        $productIds = '';
+        if(count($wishlistDecoded['metafields']) !== 0) {
+            if($wishlistDecoded['metafields'][0]['value'] !== "") {
+                if(strpos($wishlistDecoded['metafields'][0]['value'], ',') !== false) {
+                    $productIdTab = explode(',' , $wishlistDecoded['metafields'][0]['value']);
+                    foreach ($productIdTab as $value) {
+                        if((string) $productIdToDelete !== (string) $value) {
+                            if($productIds == '') {
+                                $productIds .= $value;
+                            } else {
+                                $productIds .= ',' . $value;
+                            }
+                        }
+                    }
+                }
+
+                if($productIds === '') {
+                    $productIds = "null";
+                }
+
+                $data = [
+                    "metafield" => [
+                        "id" => $wishlistDecoded['metafields'][0]['id'],
+                        "value" => '' . $productIds . '',
+                        "value_type" => 'string',
+                    ]
+                ];
+
+                try {
+                    $client = HttpClient::create();
+                    $response = $client->request('PUT', shopifyApiurl . 'metafields/'.$wishlistDecoded['metafields'][0]['id'].'.json', ['json' => $data]);
+                } catch (\Exception $e) {
+                    var_dump($e);
+                }
+            }
+        }
+
+        return new Response('wishlist saved');
+    }
+
+    
     function replaceSpecialCharacters($string) {
 
         return str_replace(array('&', '-', '\t', '"', '  ', '/', '+', "'"), array('%26', '%2D', '', '', ' ', '%2F', '%2B', ''), $string);
