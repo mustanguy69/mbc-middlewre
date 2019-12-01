@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Wishlist;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpClient\CurlHttpClient;
@@ -441,6 +442,26 @@ class ShopifyController extends AbstractController
         $wishlist = $this->getMetafieldCustomer($customerId,'');
         $wishlistDecoded = json_decode($wishlist, true);
         $productIds = '';
+
+        $em = $this->getDoctrine()->getManager();
+        $wishlist = $em->getRepository('App:Wishlist')->findOneBy(['customerId' => $customerId]);
+        if($wishlist) {
+            $products = $wishlist->getProductIds();
+            if($products !== null or $products !== "") {
+                $wishlist->setProductIds($productIds);
+            } else {
+                $wishlist->setProductIds($products . ',' . $productId);
+            }
+        } else {
+            $wishlist = new Wishlist();
+            $wishlist->setCustomerId($customerId);
+            $wishlist->setProductIds($productIds);
+
+            $em->persist($wishlist);
+
+        }
+
+        $em->flush();
         if(count($wishlistDecoded['metafields']) !== 0) {
             if($wishlistDecoded['metafields'][0]['value'] !== "") {
                 if(strpos($wishlistDecoded['metafields'][0]['value'], ',') !== false) {
@@ -495,6 +516,87 @@ class ShopifyController extends AbstractController
         return new Response('wishlist saved');
     }
 
+
+    /**
+     * set Products in wishlist bdd
+     * @Route("/setWishlist")
+     * @return mixed
+     */
+    function setWishlist(Request $request) {
+
+        $customerId = $request->request->get('customerId');
+        $productId = $request->request->get('productId');
+
+        $em = $this->getDoctrine()->getManager();
+        $wishlist = $em->getRepository('App:Wishlist')->findOneBy(['customerId' => $customerId]);
+        if($wishlist) {
+            $products = $wishlist->getProductIds();
+            if($products == null or $products == "") {
+                $wishlist->setProductIds($productId);
+            } else {
+                $wishlist->setProductIds($products . ',' . $productId);
+            }
+        } else {
+            $wishlist = new Wishlist();
+            $wishlist->setCustomerId($customerId);
+            $wishlist->setProductIds($productId);
+
+            $em->persist($wishlist);
+
+        }
+
+        $em->flush();
+
+        return new Response('wishlist saved');
+    }
+
+    /**
+     * get all products in wishlist
+     * @Route("/getWishlist")
+     * @return mixed
+     */
+    function getWishlist(Request $request) {
+
+        $customerId = $request->request->get('customerId');
+
+        $em = $this->getDoctrine()->getManager();
+        $wishlist = $em->getRepository('App:Wishlist')->findOneBy(['customerId' => $customerId]);
+
+        if ($wishlist) {
+            $result = $wishlist->getProductIds();
+        } else {
+            $result = null;
+        }
+
+        return new Response($result);
+    }
+
+    /**
+     * remove Products from wishlist bdd
+     * @Route("/removeWishlist")
+     * @return mixed
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
+    function removeWishlist(Request $request) {
+
+        $customerId = $request->request->get('customerId');
+        $productId = $request->request->get('productId');
+
+        $em = $this->getDoctrine()->getManager();
+        $wishlist = $em->getRepository('App:Wishlist')->findOneBy(['customerId' => $customerId]);
+        $wishlistExploded = explode(',', $wishlist->getProductIds());
+        foreach ($wishlistExploded as $product) {
+            if($product !== $productId) {
+                $productIds[] = $product;
+            }
+        }
+        $wishlistImploded = implode(',', $productIds);
+        $wishlist->setProductIds($wishlistImploded);
+        $em->flush();
+
+        return new Response('product removed from the wishlist');
+    }
+
     /**
      * Call Shopify API for removing product form metafield wishlist
      * @Route("/removeProductFromWishlist")
@@ -545,27 +647,6 @@ class ShopifyController extends AbstractController
                     var_dump($e);
                 }
             }
-        }
-
-        return new Response('wishlist saved');
-    }
-
-    /**
-     * Call Shopify API for removing product form metafield wishlist
-     * @Route("/removeWishlist")
-     * @return mixed
-     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
-     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
-     */
-    function removeWishlist(Request $request) {
-
-        try {
-            $client = HttpClient::create();
-            $response = $client->request('DELETE', shopifyApiurl . 'metafields/11391895240835.json');
-        } catch (\Exception $e) {
-            var_dump($e);
         }
 
         return new Response('wishlist saved');
