@@ -585,6 +585,7 @@ class ShopifyController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $wishlist = $em->getRepository('App:Wishlist')->findOneBy(['customerId' => $customerId]);
         $wishlistExploded = explode(',', $wishlist->getProductIds());
+        $productIds = [];
         foreach ($wishlistExploded as $product) {
             if($product !== $productId) {
                 $productIds[] = $product;
