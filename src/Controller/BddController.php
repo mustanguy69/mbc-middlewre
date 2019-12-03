@@ -136,21 +136,20 @@ class BddController extends AbstractController
 
         $products = "
         <Product>
-            <ShortDescription>".$product->getTitle()."</ShortDescription>
-            <SupplierSKU>".$product->getSku()."</SupplierSKU>
-            <ManufacturerSKU>".$product->getBarcode()."</ManufacturerSKU>
-            <ProductType>".$product->getType()->getName()."</ProductType>
-            <Supplier>".$product->getSupplier()->getName()."</Supplier>
-            <SupplierCode>".$product->getSupplier()->getCode()."</SupplierCode>
-            <Brand>".$product->getBrand()->getName()."</Brand>
+            <ShortDescription>".$this->xmlEscape($product->getTitle())."</ShortDescription>
+            <SupplierSKU>".$this->xmlEscape($product->getSku())."</SupplierSKU>
+            <ManufacturerSKU>".$this->xmlEscape($product->getBarcode())."</ManufacturerSKU>
+            <ProductType>".$this->xmlEscape($product->getType()->getName())."</ProductType>
+            <Supplier>".$this->xmlEscape($product->getSupplier()->getName())."</Supplier>
+            <SupplierCode>".$this->xmlEscape($product->getSupplier()->getCode())."</SupplierCode>
+            <Brand>".$this->xmlEscape($product->getBrand()->getName())."</Brand>
             <POSPrice>$".$this->adjustDecimal($product->getPrice())."</POSPrice>
             <WebPrice>$".$this->adjustDecimal($product->getPrice())."</WebPrice>
-            <Size>".$productSize."</Size>
-            <Weight>".$product->getWeight()."</Weight>
-            <Length>".$product->getLength()."</Length>
-            <Colour>".$productColor."</Colour>
-            <Season>".$product->getSeason()."</Season>
-            <LongDescription>".$product->getDescription()."</LongDescription>
+            <Size>".$this->xmlEscape($productSize)."</Size>
+            <Weight>".$this->xmlEscape($product->getWeight())."</Weight>
+            <Length>".$this->xmlEscape($product->getLength())."</Length>
+            <Colour>".$this->xmlEscape($productColor)."</Colour>
+            <Season>".$this->xmlEscape($product->getSeason())."</Season>
             <LastUpdated>".$todayFormated."</LastUpdated>
         </Product>";
 
@@ -337,21 +336,20 @@ class BddController extends AbstractController
 
         $products = "
         <Product>
-            <ShortDescription>".$product->getTitle()."</ShortDescription>
-            <SupplierSKU>".$product->getSku()."</SupplierSKU>
-            <ManufacturerSKU>".$product->getBarcode()."</ManufacturerSKU>
-            <ProductType>".$product->getType()->getName()."</ProductType>
-            <Supplier>".$product->getSupplier()->getName()."</Supplier>
-            <SupplierCode>".$product->getSupplier()->getCode()."</SupplierCode>
-            <Brand>".$product->getBrand()->getName()."</Brand>
+            <ShortDescription>".$this->xmlEscape($product->getTitle())."</ShortDescription>
+            <SupplierSKU>".$this->xmlEscape($product->getSku())."</SupplierSKU>
+            <ManufacturerSKU>".$this->xmlEscape($product->getBarcode())."</ManufacturerSKU>
+            <ProductType>".$this->xmlEscape($product->getType()->getName())."</ProductType>
+            <Supplier>".$this->xmlEscape($product->getSupplier()->getName())."</Supplier>
+            <SupplierCode>".$this->xmlEscape($product->getSupplier()->getCode())."</SupplierCode>
+            <Brand>".$this->xmlEscape($product->getBrand()->getName())."</Brand>
             <POSPrice>$".$this->adjustDecimal($product->getPrice())."</POSPrice>
             <WebPrice>$".$this->adjustDecimal($product->getPrice())."</WebPrice>
-            <Size>".$productSize."</Size>
-            <Weight>".$product->getWeight()."</Weight>
-            <Length>".$product->getLength()."</Length>
-            <Colour>".$productColor."</Colour>
-            <Season>".$productSeason."</Season>
-            <LongDescription>".$product->getDescription()."</LongDescription>
+            <Size>".$this->xmlEscape($productSize)."</Size>
+            <Weight>".$this->xmlEscape($product->getWeight())."</Weight>
+            <Length>".$this->xmlEscape($product->getLength())."</Length>
+            <Colour>".$this->xmlEscape($productColor)."</Colour>
+            <Season>".$this->xmlEscape($productSeason)."</Season>
             <LastUpdated>".$todayFormated."</LastUpdated>
         </Product>";
 
@@ -554,6 +552,10 @@ class BddController extends AbstractController
         }
 
         return $value;
+    }
+
+    function xmlEscape($string) {
+        return str_replace(array('&', '<', '>', '\'', '"', '”', '$'), array('&amp;', '&lt;', '&gt;', '', '', '', ''), $string);
     }
 
 }

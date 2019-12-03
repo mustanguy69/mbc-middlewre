@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Annotation\Route;
+use Psr\Log\LoggerInterface;
 
 class ExcelBulkImportController extends AbstractController
 {
@@ -36,7 +37,7 @@ class ExcelBulkImportController extends AbstractController
     /**
      * @Route("/upload/bulk/import", name="uploadBulkImport")
      */
-    public function uploadBulkImport(Request $request) {
+    public function uploadBulkImport(Request $request, LoggerInterface $logger) {
 
         $file = $request->files->get('file');
 
@@ -58,7 +59,8 @@ class ExcelBulkImportController extends AbstractController
         $em->persist($bulkImport);
         $em->flush();
 
-        $command = new BulkImportCommand($em);
+
+        $command = new BulkImportCommand($em, $logger);
         $input = new ArrayInput(['id' => $bulkImport->getId()]);
         $output = new BufferedOutput();
 
