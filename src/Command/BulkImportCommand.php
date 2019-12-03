@@ -82,7 +82,7 @@ class BulkImportCommand extends Command
                     'sku'               =>  $value['sku'],
                     'supplier'          =>  $supplier->getId(),
                     'brand'             =>  $brand->getId(),
-                    'description'       =>   $value['description'],
+                    'description'       =>  $value['description'],
                     'product-type'      =>  $productType->getId(),
                     'tags'              =>  $value['tags'],
                     'price'             =>  $value['price'],

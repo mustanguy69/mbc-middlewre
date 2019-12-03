@@ -107,7 +107,7 @@ class RexToShopifyController extends AbstractController
 
         $em->flush();
 
-        return new Response();
+        return new Response('cron passed');
 
     }
 
