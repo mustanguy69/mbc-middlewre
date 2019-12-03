@@ -11,17 +11,21 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Psr\Log\LoggerInterface;
 
 
 class BulkImportCommand extends Command
 {
 
     private $em;
+    private $logger;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, LoggerInterface $logger)
     {
         parent::__construct();
         $this->em = $em;
+        $this->logger = $logger;
+
     }
 
     protected static $defaultName = 'app:bulk-import';
@@ -123,7 +127,7 @@ class BulkImportCommand extends Command
 
             $output->writeln('done');
         } catch (\Exception $e) {
-            $output->writeln($e);
+            $this->logger->error($e);
             $bulkImport->setStatus('Error');
         }
 
