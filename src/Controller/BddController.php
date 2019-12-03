@@ -145,10 +145,10 @@ class BddController extends AbstractController
             <Brand>".$product->getBrand()->getName()."</Brand>
             <POSPrice>$".$this->adjustDecimal($product->getPrice())."</POSPrice>
             <WebPrice>$".$this->adjustDecimal($product->getPrice())."</WebPrice>
-            <Size>".$product->getSize()->getSize()."</Size>
+            <Size>".$productSize."</Size>
             <Weight>".$product->getWeight()."</Weight>
             <Length>".$product->getLength()."</Length>
-            <Colour>".$product->getColor()->getName()."</Colour>
+            <Colour>".$productColor."</Colour>
             <Season>".$product->getSeason()."</Season>
             <LongDescription>".$product->getDescription()."</LongDescription>
             <LastUpdated>".$todayFormated."</LastUpdated>
