@@ -555,7 +555,7 @@ class BddController extends AbstractController
     }
 
     function xmlEscape($string) {
-        return str_replace(array('&', '<', '>', '\'', '"', '”', '$'), array('&amp;', '&lt;', '&gt;', '', '', '', ''), $string);
+        return str_replace(array('&', '<', '>', '\'', '"', '”', '$'), array('&amp;', '&lt;', '&gt;', '', 'inch', '', ''), $string);
     }
 
 }
