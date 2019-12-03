@@ -62,6 +62,17 @@ class BulkImportCommand extends Command
                 $productType = $this->em->getRepository('App:ProductTypes')->findOneBy(['name' => $value['type']]);
                 $productSize = $this->em->getRepository('App:ProductSizes')->findOneBy(['size' => $value['size']]);
                 $productColor = $this->em->getRepository('App:ProductColors')->findOneBy(['name' => $value['color']]);
+                if($productSize) {
+                    $productSize = $productSize->getId();
+                } else {
+                    $productSize = '';
+                }
+
+                if($productColor) {
+                    $productColor = $productColor->getId();
+                } else {
+                    $productColor = '';
+                }
 
                 $controller = new BddController($this->em);
 
@@ -93,8 +104,8 @@ class BulkImportCommand extends Command
                     'weight'            =>  $value['weight'],
                     'length'            =>  $value['length'],
                     'season'            =>  $value['season'],
-                    'size'              =>  $productSize->getId(),
-                    'color'             =>  $productColor->getId(),
+                    'size'              =>  $productSize,
+                    'color'             =>  $productColor,
                     'women'             =>  $value['women'],
                     'men'               =>  $value['men'],
                     'boys'              =>  $value['boys'],
