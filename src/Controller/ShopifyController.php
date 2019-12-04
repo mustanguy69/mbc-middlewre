@@ -33,10 +33,13 @@ class ShopifyController extends AbstractController
      * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
-    public function addUpdateImage($productId, $image, $name) {
+    public function addUpdateImage($productId, $image, $name, $variant = null) {
 
         $data = [
             'image' => [
+                'variant_ids' => [
+                    $variant
+                ],
                 'attachment' => $image,
                 'alt' => $name,
             ],
