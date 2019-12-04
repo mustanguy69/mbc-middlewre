@@ -253,48 +253,21 @@ class ShopifyController extends AbstractController
      * @Route("/getAllProductVariantOptions", name="getAllProductVariantOptions")
      */
     function getAllProductVariantOptions(Request $request) {
-        $variantsArray = [];
-        $collectionId = $request->query->get('collectionId');
+        $collectionName = $request->query->get('collectionName');
         $arr = [];
-        try {
-            $client = HttpClient::create();
-            $response = $client->request('GET', shopifyApiurl . 'products.json?collection_id='. $collectionId .'&limit=250&fields=variants');
-            $client = HttpClient::create();
-            $countRequest = $client->request('GET', shopifyApiurl . 'products/count.json?collection_id=' . $collectionId);
-            $countContent = json_decode($countRequest->getContent(), true);
-            $count = $countContent['count'];
-            $variantsArray[] = json_decode($response->getContent(), true);
-            if(array_key_exists('link', $response->getHeaders())) {
-                $paginationLink = $response->getHeaders()['link'];
-                $occurence = floor(($count / 250));
-                for($i = 1; $i <= $occurence; $i++) {
-                    $result = $this->paginationRequestVariants($paginationLink);
-                    if ($result != false) {
-                        $variantsArray[] = json_decode($result->getContent(), true);
-                        $paginationLink = $result->getHeaders()['link'];
-                    }
-                }
-            }
+        $em = $this->getDoctrine()->getManager();
+        $collection = $em->getRepository('App:ProductTypes')->findOneBy(['name' => $collectionName]);
+        $products = $em->getRepository('App:Products')->findBy(['type' => $collection]);
 
-            $colorsArr = [];
-            $sizeArr = [];
-            foreach ($variantsArray as $variants) {
-                foreach ($variants['products'] as $variant) {
-                    foreach ($variant['variants'] as $idk) {
-                        if ($idk['option1'] != "Default Title") {
-                            $sizeArr[] =  $idk['option1'];
-                            $colorsArr[] =  $idk['option2'];
-                        }
-                    }
-                }
-            }
-            $arr['colors'] =  array_unique($colorsArr);
-            $arr['sizes'] = array_unique($sizeArr);
-
-        } catch (\Exception $e) {
-            dump($e);
+        $colorsArr = [];
+        $sizeArr = [];
+        foreach ($products as $product) {
+            $sizeArr[] =  $product->getSize()->getSize();
+            $colorsArr[] =  $product->getColor()->getName();
         }
 
+        $arr['colors'] =  array_unique($colorsArr);
+        $arr['sizes'] = array_unique($sizeArr);
 
         return new JsonResponse($arr);
     }
