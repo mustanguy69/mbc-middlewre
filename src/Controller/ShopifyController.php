@@ -33,13 +33,10 @@ class ShopifyController extends AbstractController
      * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
-    public function addUpdateImage($productId, $image, $name, $variant = null) {
+    public function addUpdateImage($productId, $image, $name) {
 
         $data = [
             'image' => [
-                'variant_ids' => [
-                    $variant
-                ],
                 'attachment' => $image,
                 'alt' => $name,
             ],
@@ -53,6 +50,40 @@ class ShopifyController extends AbstractController
         }
 
         $response = json_decode($response->getContent());
+
+        return $response->image->id;
+
+    }
+
+    /**
+     * Call Shopify API for attach image variant
+     * @Route("/attachImageWithVariant/{productId}")
+     * @param $productId
+     * @param $image
+     * @return mixed
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
+    public function attachImageWithVariant($variantId, $imageId) {
+
+        $data = [
+            'variant' => [
+                'id' => $variantId,
+                'image_id' => $imageId,
+            ],
+        ];
+
+        try {
+            $client = HttpClient::create();
+            $response = $client->request('PUT', shopifyApiurl . 'variants/' . $variantId . '.json', ['json' => $data]);
+        } catch (\Exception $e) {
+            var_dump($e);
+        }
+
+        $response = json_decode($response->getContent());
+
         return $response->image->id;
 
     }
