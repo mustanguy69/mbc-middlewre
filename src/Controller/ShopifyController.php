@@ -35,12 +35,21 @@ class ShopifyController extends AbstractController
      */
     public function addUpdateImage($productId, $image, $name) {
 
-        $data = [
-            'image' => [
-                'attachment' => $image,
-                'alt' => $name,
-            ],
-        ];
+        if (base64_encode(base64_decode($image, true)) === $image){
+            $data = [
+                'image' => [
+                    'attachment' => $image,
+                    'alt' => $name,
+                ],
+            ];
+        } else {
+            $data = [
+                'image' => [
+                    'src' => $image,
+                    'alt' => $name,
+                ],
+            ];
+        }
 
         try {
             $client = HttpClient::create();
