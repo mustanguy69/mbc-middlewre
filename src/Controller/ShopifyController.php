@@ -262,8 +262,13 @@ class ShopifyController extends AbstractController
         $colorsArr = [];
         $sizeArr = [];
         foreach ($products as $product) {
-            $sizeArr[] =  $product->getSize()->getSize();
-            $colorsArr[] =  $product->getColor()->getName();
+            if ($product->getSize()) {
+                $sizeArr[] =  $product->getSize()->getSize();
+            }
+
+            if($product->getColor()) {
+                $colorsArr[] =  $product->getColor()->getName();
+            }
         }
 
         $arr['colors'] =  array_unique($colorsArr);
