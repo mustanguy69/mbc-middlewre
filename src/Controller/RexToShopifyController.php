@@ -100,6 +100,12 @@ class RexToShopifyController extends AbstractController
                 foreach($shopifyIdRequest->products[0]->variants as $variant) {
                     if($variant->sku == $product->getSku()) {
                         $product->setShopifyVariantId($variant->id);
+
+                        if($product->getImages()) {
+                            foreach($product->getImages() as $image) {
+                                (new ShopifyController())->addUpdateImage($variant->id, $image->getSrc(), $image->getName());
+                            }
+                        }
                     }
                 }
             }

@@ -76,16 +76,16 @@ class BddController extends AbstractController
         $todayFormated = $today->format('Y-m-d H:i:s');
 
         $product = new Products();
-        $product->setTitle($title)
-            ->setSku($sku)
+        $product->setTitle($this->xmlEscape($title))
+            ->setSku($this->xmlEscape($sku))
             ->setSupplier($supplier)
             ->setBrand($brand)
-            ->setDescription($description)
+            ->setDescription($this->xmlEscape(nl2br($description)))
             ->setType($type)
             ->setTags($tags)
             ->setPrice($price)
             ->setCompare($compare)
-            ->setBarcode($barcode)
+            ->setBarcode($this->xmlEscape($barcode))
             ->setSupplierStock($supplierStock)
             ->setStock($stock)
             ->setWeight($weight)
@@ -230,16 +230,16 @@ class BddController extends AbstractController
         $today = new \DateTime();
         $todayFormated = $today->format('Y-m-d H:i:s');
 
-        $product->setTitle($title)
-            ->setSku($sku)
+        $product->setTitle($this->xmlEscape($title))
+            ->setSku($this->xmlEscape($sku))
             ->setSupplier($supplierObj)
             ->setBrand($brandObj)
-            ->setDescription($description)
+            ->setDescription($this->xmlEscape(nl2br($description)))
             ->setType($typeObj)
             ->setTags($tags)
             ->setPrice($price)
             ->setCompare($compare)
-            ->setBarcode($barcode)
+            ->setBarcode($this->xmlEscape($barcode))
             ->setSupplierStock($supplierStock)
             ->setStock($stock)
             ->setWeight($weight)
@@ -555,7 +555,7 @@ class BddController extends AbstractController
     }
 
     function xmlEscape($string) {
-        return str_replace(array('&', '<', '>', '\'', '"', '”', '$'), array('&amp;', '&lt;', '&gt;', '', 'inch', '', ''), $string);
+        return str_replace(array('&', '<', '>', '\'', '"', '”', '$'), array('&amp;', '&lt;', '&gt;', '', 'inch', 'inch', ''), $string);
     }
 
 }
