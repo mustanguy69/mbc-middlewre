@@ -93,7 +93,7 @@ class ShopifyController extends AbstractController
 
         $response = json_decode($response->getContent());
 
-        return $response->image->id;
+        return new Response('Image matched to variant');
 
     }
 
