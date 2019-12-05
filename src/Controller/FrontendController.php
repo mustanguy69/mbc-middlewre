@@ -162,7 +162,7 @@ class FrontendController extends AbstractController
     public function excelBulkImportPage() {
 
         $em = $this->getDoctrine()->getManager();
-        $bulkImports = $em->getRepository('App:BulkImport')->findBy([], ['date' => 'ASC']);
+        $bulkImports = $em->getRepository('App:BulkImport')->findBy([], ['date' => 'DESC']);
 
         return $this->render('excel-bulk-import.html.twig', ['bulkImports' => $bulkImports]);
     }
