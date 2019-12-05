@@ -26,7 +26,7 @@
                         <tbody class="mdc-data-table__content">
                         {% for bulkImport in bulkImports %}
                             <tr class="mdc-data-table__row">
-                                <td class="mdc-data-table__cell">{{ bulkImport.date|date("m/d/Y H:i:s") }}</td>
+                                <td class="mdc-data-table__cell">{{ bulkImport.date|date("d/m/Y H:i:s") }}</td>
                                 <td class="mdc-data-table__cell"><a href="{{ path('downloadFileBulkImport', {'file': bulkImport.fileName}) }}">{{ bulkImport.fileName }}</a></td>
                                 <td class="mdc-data-table__cell">{{ bulkImport.status }}</td>
                             </tr>
@@ -54,9 +54,9 @@
                         return confirm("Are you sure?");
                     },
                     success: function (data, status) {
-
-                        // $('.mdc-snackbar__label').empty().text('Products updated !');
-                        // snackbar.open();
+                        $('.mdc-snackbar__label').empty().text('Bulk Import Started !');
+                        snackbar.open();
+                        location.reload()
                     }
                 });
             }
