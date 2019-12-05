@@ -256,18 +256,40 @@ class ShopifyController extends AbstractController
         $collectionName = $request->query->get('collectionName');
         $arr = [];
         $em = $this->getDoctrine()->getManager();
-        $collection = $em->getRepository('App:ProductTypes')->findOneBy(['name' => $collectionName]);
-        $products = $em->getRepository('App:Products')->findBy(['type' => $collection]);
+        $products = [];
+        if(strpos($collectionName, ',') !== false) {
+            $collectionArray = explode(',', $collectionName);
+            foreach ($collectionArray as $collectionName) {
+                $collection = $em->getRepository('App:ProductTypes')->findOneBy(['name' => $collectionName]);
+                $products[] = $em->getRepository('App:Products')->findBy(['type' => $collection]);
+            }
+        } else {
+            $collection = $em->getRepository('App:ProductTypes')->findOneBy(['name' => $collectionName]);
+            $products = $em->getRepository('App:Products')->findBy(['type' => $collection]);
+        }
 
         $colorsArr = [];
         $sizeArr = [];
-        foreach ($products as $product) {
-            if ($product->getSize()) {
-                $sizeArr[] =  $product->getSize()->getSize();
-            }
 
-            if($product->getColor()) {
-                $colorsArr[] =  $product->getColor()->getName();
+        foreach ($products as $product) {
+            if(is_array($product)) {
+                foreach ($product as $item) {
+                    if ($item->getSize()) {
+                        $sizeArr[] =  $item->getSize()->getSize();
+                    }
+
+                    if($item->getColor()) {
+                        $colorsArr[] =  $item->getColor()->getName();
+                    }
+                }
+            } else {
+                if ($product->getSize()) {
+                    $sizeArr[] =  $product->getSize()->getSize();
+                }
+
+                if($product->getColor()) {
+                    $colorsArr[] =  $product->getColor()->getName();
+                }
             }
         }
 
