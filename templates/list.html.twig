@@ -30,7 +30,7 @@
                         </thead>
                         <tbody class="mdc-data-table__content">
                             {% for product in pagination.items %}
-                                <tr class="mdc-data-table__row" style='cursor: pointer' data-url="{{ path('updateProduct', {'id': product.id}) }}">
+                                <tr class="mdc-data-table__row" style='cursor: pointer' onclick="{{ path('updateProduct', {'id': product.id}) }}" data-url="{{ path('updateProduct', {'id': product.id}) }}">
                                     <td class="mdc-data-table__cell"><img style="width: 60px; vertical-align: middle; padding: 2px" src="{% if product.images[0] is defined %}{{ product.images[0].src }}{% else %}{{ asset('dist/img/no-image.png') }}{% endif %}" /></td>
                                     <td class="mdc-data-table__cell">{{ product.title }}</td>
                                     <td class="mdc-data-table__cell">{{ product.sku }}</td>
@@ -48,7 +48,7 @@
         {{ knp_pagination_render(pagination, 'pagination.html.twig') }}
     </div>
     <script>
-        $('.mdc-data-table__row').on('click', function (e) {
+        $(document).on('click', '.mdc-data-table__row',function (e) {
            window.location = $(this).data('url');
         });
         var urlParams = new URLSearchParams(window.location.search);
