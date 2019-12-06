@@ -308,6 +308,7 @@ class ShopifyController extends AbstractController
 
         $colorsArr = [];
         $sizeArr = [];
+        $brandArr = [];
 
         foreach ($products as $product) {
             if(is_array($product)) {
@@ -319,6 +320,10 @@ class ShopifyController extends AbstractController
                     if($item->getColor()) {
                         $colorsArr[] =  $item->getColor()->getName();
                     }
+
+                    if ($item->getBrand()) {
+                        $brandArr[] =  $item->getBrand()->getName();
+                    }
                 }
             } else {
                 if ($product->getSize()) {
@@ -328,11 +333,16 @@ class ShopifyController extends AbstractController
                 if($product->getColor()) {
                     $colorsArr[] =  $product->getColor()->getName();
                 }
+
+                if ($product->getBrand()) {
+                    $brandArr[] =  $product->getBrand()->getName();
+                }
             }
         }
 
         $arr['colors'] =  array_unique($colorsArr);
         $arr['sizes'] = array_unique($sizeArr);
+        $arr['brands'] = array_unique($brandArr);
 
         return new JsonResponse($arr);
     }
