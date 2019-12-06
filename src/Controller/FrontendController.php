@@ -40,7 +40,7 @@ class FrontendController extends AbstractController
         $pagination = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
-            30
+            20
         );
 
         return $this->render('list.html.twig', ['pagination' => $pagination]);
