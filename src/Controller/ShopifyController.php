@@ -98,6 +98,39 @@ class ShopifyController extends AbstractController
     }
 
     /**
+     * Call Shopify API for add tags product
+     * @Route("/addTags/{productId}")
+     * @param $productId
+     * @param $tags
+     * @return mixed
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
+    public function addTags($productId, $tags) {
+
+        $data = [
+            'product' => [
+                'id' => $productId,
+                'tags' => $tags,
+            ],
+        ];
+
+        try {
+            $client = HttpClient::create();
+            $response = $client->request('PUT', shopifyApiurl . 'products/' . $productId . '.json', ['json' => $data]);
+        } catch (\Exception $e) {
+            var_dump($e);
+        }
+
+        $response = json_decode($response->getContent());
+
+        return new Response('Tags matched to product');
+
+    }
+
+    /**
      * Call Shopify API for add/update image products
      * @Route("/removeImage/{productId}")
      * @param $productId
@@ -266,6 +299,11 @@ class ShopifyController extends AbstractController
         } else {
             $collection = $em->getRepository('App:ProductTypes')->findOneBy(['name' => $collectionName]);
             $products = $em->getRepository('App:Products')->findBy(['type' => $collection]);
+
+            if (!$collection) {
+                $brand = $em->getRepository('App:Brands')->findOneBy(['name' => $collectionName]);
+                $products = $em->getRepository('App:Products')->findBy(['brand' => $brand]);
+            }
         }
 
         $colorsArr = [];
