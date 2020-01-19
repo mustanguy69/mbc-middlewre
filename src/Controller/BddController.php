@@ -62,6 +62,7 @@ class BddController extends AbstractController
         if($shopify === null) {
             $shopify = 0;
         }
+
         $base64Image = $request->request->get('base64Image');
         $base64ImageName = $request->request->get('base64ImageName');
 
@@ -72,7 +73,9 @@ class BddController extends AbstractController
         $size = $em->getRepository('App:ProductSizes')->find($size);
         $color = $em->getRepository('App:ProductColors')->find($color);
 
-        $today = new \DateTime();
+        $tags = $tags. ';' .$brand->getName();
+
+            $today = new \DateTime();
         $todayFormated = $today->format('Y-m-d H:i:s');
 
         $product = new Products();
