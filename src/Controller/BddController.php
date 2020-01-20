@@ -35,7 +35,7 @@ class BddController extends AbstractController
      */
     public function addProductBdd(Request $request)
     {
-
+        // get request data
         $title = $request->request->get('title');
         $sku = $request->request->get('sku');
         $supplier = $request->request->get('supplier');
@@ -66,18 +66,21 @@ class BddController extends AbstractController
         $base64Image = $request->request->get('base64Image');
         $base64ImageName = $request->request->get('base64ImageName');
 
+        // get entity manager
         $em = $this->em2;
+
+        // get entity object with request data
         $brand = $em->getRepository('App:Brands')->find($brand);
         $supplier = $em->getRepository('App:Suppliers')->find($supplier);
         $type = $em->getRepository('App:ProductTypes')->find($type);
         $size = $em->getRepository('App:ProductSizes')->find($size);
         $color = $em->getRepository('App:ProductColors')->find($color);
 
-        $tags = $tags. ';' .$brand->getName();
-
-            $today = new \DateTime();
+        // get today and format it
+        $today = new \DateTime();
         $todayFormated = $today->format('Y-m-d H:i:s');
 
+        // create object and set data
         $product = new Products();
         $product->setTitle($this->xmlEscape($title))
             ->setSku($this->xmlEscape($sku))
@@ -106,6 +109,7 @@ class BddController extends AbstractController
             ->setMassUploadedRex(false)
             ->setSyncWithShopify(false);
 
+        // if image/s and set it to product
         if ($base64Image) {
             $images = array_combine($base64ImageName, $base64Image);
             foreach ($images as $key => $image) {
@@ -122,21 +126,25 @@ class BddController extends AbstractController
             }
         }
 
+        // save product
         $em->persist($product);
         $em->flush();
 
+        // get name of color for setting it to REX
         if($product->getColor()) {
             $productColor = $product->getColor()->getName();
         } else {
             $productColor = "";
         }
 
+        // get name of size for setting it to REX
         if($product->getSize()) {
             $productSize = $product->getSize()->getSize();
         } else {
             $productSize = "";
         }
 
+        // create xml for REX
         $products = "
         <Product>
             <ShortDescription>".$this->xmlEscape($product->getTitle())."</ShortDescription>
@@ -156,12 +164,13 @@ class BddController extends AbstractController
             <LastUpdated>".$todayFormated."</LastUpdated>
         </Product>";
 
-
+        // call REX controller to send product
         $request = (new RexSoapController())->addProducts($products);
         $xmlRequest     = new \SimpleXMLElement($request);
         $response = $xmlRequest->children('http://schemas.xmlsoap.org/soap/envelope/')->Body->children()->SaveProductsResponse;
         $status = (string) $response->SaveProductsResult->Response->Status;
 
+        // update stock for supplier
         $stockSupplier = "
         <Product>
             <SupplierSKU>".$product->getSku()."</SupplierSKU>
@@ -169,6 +178,7 @@ class BddController extends AbstractController
         </Product>";
         $requestAdjustStockSupplier = (new RexSoapController())->adjustStocksSupplier($stockSupplier);
 
+        // update stock for in shop
         $stockInShop = "
         <Product>
             <SupplierSKU>".$product->getSku()."</SupplierSKU>
@@ -187,11 +197,16 @@ class BddController extends AbstractController
      */
     public function updateProductPage(Request $request, ValidatorInterface $validator, Base64FileExtractor $base64FileExtractor) {
 
+        // get doctrine manager
         $em = $this->getDoctrine()->getManager();
 
+        // get product id by request to get the product
         $id = $request->request->get('product-id');
+
+        // get product by ID
         $product = $em->getRepository('App:Products')->find($id);
 
+        // get form data by request
         $title = $request->request->get('title');
         $sku = $request->request->get('sku');
         $supplier = $request->request->get('supplier');
@@ -224,15 +239,18 @@ class BddController extends AbstractController
         $base64ImageUploaded = $request->request->get('base64ImageUploaded');
         $base64ImageNameUploaded = $request->request->get('base64ImageNameUploaded');
 
+        // get entity object with request data
         $brandObj = $em->getRepository('App:Brands')->find($brand);
         $supplierObj = $em->getRepository('App:Suppliers')->find($supplier);
         $typeObj = $em->getRepository('App:ProductTypes')->find($type);
         $sizeObj = $em->getRepository('App:ProductSizes')->find($size);
         $colorObj = $em->getRepository('App:ProductColors')->find($color);
 
+        // get today and format it
         $today = new \DateTime();
         $todayFormated = $today->format('Y-m-d H:i:s');
 
+        // update object and set data
         $product->setTitle($this->xmlEscape($title))
             ->setSku($this->xmlEscape($sku))
             ->setSupplier($supplierObj)
@@ -258,7 +276,7 @@ class BddController extends AbstractController
             ->setToShopify($shopify)
             ->setUpdatedAt($today);
 
-
+        // if image/s and set it to product
         if ($base64Image) {
             $images = array_combine($base64ImageName, $base64Image);
             foreach ($images as $key => $image) {
@@ -313,8 +331,14 @@ class BddController extends AbstractController
             $status = 'success';
         }
 
+
         $tags = '';
         $tags .= $product->getTags();
+
+        if($product->getBrand()) {
+            $productBrand = $product->getBrand()->getName();
+            $tags .= ','.$productBrand;
+        }
 
         if($product->getColor()) {
             $productColor = $product->getColor()->getName();
@@ -337,6 +361,9 @@ class BddController extends AbstractController
             $productSeason = "CLEAR DATA";
         }
 
+        $product->setTags($productBrand);
+
+        // update product on REX
         $products = "
         <Product>
             <ShortDescription>".$this->xmlEscape($product->getTitle())."</ShortDescription>
@@ -356,11 +383,13 @@ class BddController extends AbstractController
             <LastUpdated>".$todayFormated."</LastUpdated>
         </Product>";
 
+        // call REX controller to send product
         $requestAddProduct = (new RexSoapController())->addProducts($products);
         $xmlRequest     = new \SimpleXMLElement($requestAddProduct);
         $response = $xmlRequest->children('http://schemas.xmlsoap.org/soap/envelope/')->Body->children()->SaveProductsResponse;
         $status = (string) $response->SaveProductsResult->Response->Status;
 
+        // update stock for supplier
         $stockSupplier = "
         <Product>
             <SupplierSKU>".$product->getSku()."</SupplierSKU>
@@ -368,6 +397,7 @@ class BddController extends AbstractController
         </Product>";
         $requestAdjustStockSupplier = (new RexSoapController())->adjustStocksSupplier($stockSupplier);
 
+        // update stock for in shop
         $stockInShop = "
         <Product>
             <SupplierSKU>".$product->getSku()."</SupplierSKU>
@@ -375,9 +405,11 @@ class BddController extends AbstractController
         </Product>";
         $requestAdjustStockInShop = (new RexSoapController())->adjustStocksInShop($stockInShop);
 
+        // if product already synced with rex and shopify
         if ($product->getSyncWithShopify()) {
             $productId = $product->getShopifyProductId();
             if ($productId) {
+                // create json product
                 $jsonProduct = [
                     "product" => [
                         "id" => $productId,
@@ -388,12 +420,16 @@ class BddController extends AbstractController
                 if($product->getDescription() !== '') {
                     $jsonProduct['product']['body_html'] = $product->getDescription();
                 }
+
+                // call controller to send data to shopify
                 $shopifyProductUpdate = (new ShopifyController())->updateProductShopify($productId, $jsonProduct);
 
+                // get variants
                 $variantId = $product->getShopifyVariantId();
                 $variant = (new ShopifyController())->getProductVariantsShopify($variantId);
                 $variantObj = json_decode($variant->getContent());
 
+                // if there is variant, update it too
                 if($variantObj->variant) {
                     if($variantObj->variant->sku === $product->getSku()) {
                         $jsonVariant = [
@@ -414,6 +450,7 @@ class BddController extends AbstractController
                             }
                         }
 
+                        // save variant
                         $shopifyVariantUpdate = (new ShopifyController())->updateVariantShopify($variantObj->variant->id, $jsonVariant);
                     }
                 } else {
