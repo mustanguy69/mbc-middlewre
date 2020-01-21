@@ -213,7 +213,7 @@ class BddController extends AbstractController
         $brand = $request->request->get('brand');
         $description = $request->request->get('description');
         $type = $request->request->get('product-type');
-        $tags = $request->request->get('tags');
+        $tagsInput = $request->request->get('tags');
         $price = $request->request->get('price');
         $compare = $request->request->get('compare');
         $barcode = $request->request->get('barcode');
@@ -257,7 +257,6 @@ class BddController extends AbstractController
             ->setBrand($brandObj)
             ->setDescription($description)
             ->setType($typeObj)
-            ->setTags($tags)
             ->setPrice($price)
             ->setCompare($compare)
             ->setBarcode($this->xmlEscape($barcode))
@@ -293,8 +292,8 @@ class BddController extends AbstractController
                     $productId = $product->getShopifyProductId();
                     $imgFile = preg_replace('#data:image/[^;]+;base64,#', '', $image);
                     $shopifyAddImageProductId = (new ShopifyController())->addUpdateImage($productId, $imgFile, $key);
-                    $shopifyVariantAttach = (new ShopifyController())->attachImageWithVariant($product->getShopifyVariantId(), $shopifyAddImageProductId);
                     $imageObj->setShopifyId($shopifyAddImageProductId);
+                    $shopifyVariantAttach = (new ShopifyController())->attachImageWithVariant($product->getShopifyVariantId(), $imageObj->getShopifyId());
                     $shopifyAddImageProduct[] = $shopifyAddImageProductId;
                 }
             }
@@ -333,8 +332,8 @@ class BddController extends AbstractController
         }
 
 
+        // todo refacto
         $tags = '';
-        $tags .= $product->getTags();
 
         if($product->getBrand()) {
             $productBrand = $product->getBrand()->getName();
@@ -362,7 +361,16 @@ class BddController extends AbstractController
             $productSeason = "CLEAR DATA";
         }
 
-        $product->setTags($tags);
+
+        $allVariants = $em->getRepository('App:Products')->findBy(['barcode' => $product->getBarcode()]);
+        foreach ($allVariants as $variant) {
+            if ($product->getTags() !== "") {
+                $variant->setTags($product->getTags().','.$tagsInput);
+            } else {
+                $variant->setTags($tags.','.$tagsInput);
+            }
+        }
+
 
         // update product on REX
         $products = "
