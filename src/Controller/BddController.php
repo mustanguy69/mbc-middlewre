@@ -42,7 +42,7 @@ class BddController extends AbstractController
         $brand = $request->request->get('brand');
         $description = $request->request->get('description');
         $type = $request->request->get('product-type');
-        $tags = $request->request->get('tags');
+        $tagsInput = $request->request->get('tags');
         $price = $request->request->get('price');
         $compare = $request->request->get('compare');
         $barcode = $request->request->get('barcode');
@@ -88,7 +88,6 @@ class BddController extends AbstractController
             ->setBrand($brand)
             ->setDescription($description)
             ->setType($type)
-            ->setTags($tags)
             ->setPrice($price)
             ->setCompare($compare)
             ->setBarcode($this->xmlEscape($barcode))
@@ -108,6 +107,41 @@ class BddController extends AbstractController
             ->setUpdatedAt($today)
             ->setMassUploadedRex(false)
             ->setSyncWithShopify(false);
+
+        // set mandatory tags to product
+        $tags = array();
+
+        if($product->getBrand()) {
+            $productBrand = $product->getBrand()->getName();
+            array_push($tags, ucfirst(strtolower($productBrand)));
+        }
+        if($product->getColor()) {
+            $productColor = $product->getColor()->getName();
+            array_push($tags, ucfirst(strtolower($productColor)));
+        }
+        if($product->getSize()) {
+            $productSize = $product->getSize()->getSize();
+            array_push($tags, ucfirst(strtolower($productSize)));
+        }
+
+        if($product->getSeason()) {
+            $productSeason = $product->getSeason();
+            array_push($tags, ucfirst(strtolower($productSeason)));
+        }
+
+        if($tagsInput !== '') {
+            $tagsInputTab = explode(',', $tagsInput);
+            $tagsToAdd = array_diff($tagsInputTab, $tags);
+            $tagsToAdd = implode(',', $tagsToAdd);
+            array_push($tags, $tagsToAdd);
+        }
+
+        $tags = array_unique($tags);
+        $tags = array_filter($tags);
+        $tags = implode(',', $tags);
+
+        $product->setTags($tags);
+
 
         // if image/s and set it to product
         if ($base64Image) {
@@ -350,32 +384,30 @@ class BddController extends AbstractController
             $productSeason = "CLEAR DATA";
         }
 
-
+        // set mandatory tags to each variant
         $allVariants = $em->getRepository('App:Products')->findBy(['barcode' => $product->getBarcode()]);
         $tags = array();
         foreach ($allVariants as $variant) {
 
             if($variant->getBrand()) {
                 $productBrand = $variant->getBrand()->getName();
-                array_push($tags, $productBrand);
+                array_push($tags, ucfirst(strtolower($productBrand)));
             }
             if($variant->getColor()) {
                 $productColor = $variant->getColor()->getName();
-                array_push($tags, $productColor);
+                array_push($tags, ucfirst(strtolower($productColor)));
             }
             if($variant->getSize()) {
                 $productSize = $variant->getSize()->getSize();
-                array_push($tags, $productSize);
+                array_push($tags, ucfirst(strtolower($productSize)));
             }
 
             if($variant->getSeason()) {
                 $productSeason = $variant->getSeason();
-                array_push($tags, $productSeason);
+                array_push($tags, ucfirst(strtolower($productSeason)));
             }
 
         }
-
-        $tags = array_unique($tags);
 
         if($tagsInput !== '') {
             $tagsInputTab = explode(',', $tagsInput);
@@ -384,6 +416,7 @@ class BddController extends AbstractController
             array_push($tags, $tagsToAdd);
         }
 
+        $tags = array_unique($tags);
         $tags = array_filter($tags);
         $tags = implode(',', $tags);
 
