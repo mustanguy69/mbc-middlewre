@@ -362,7 +362,7 @@ class BddController extends AbstractController
             $productSeason = "CLEAR DATA";
         }
 
-        $product->setTags($productBrand);
+        $product->setTags($tags);
 
         // update product on REX
         $products = "
