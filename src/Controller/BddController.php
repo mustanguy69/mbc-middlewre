@@ -333,42 +333,55 @@ class BddController extends AbstractController
 
 
         // todo refacto
-        $tags = '';
 
-        if($product->getBrand()) {
-            $productBrand = $product->getBrand()->getName();
-            $tags .= ','.$productBrand;
-        }
+
+
 
         if($product->getColor()) {
             $productColor = $product->getColor()->getName();
-            $tags .= ','.$productColor;
         } else {
             $productColor = "CLEAR DATA";
         }
 
         if($product->getSize()) {
             $productSize = $product->getSize()->getSize();
-            $tags .= ','.$productSize;
         } else {
             $productSize = "CLEAR DATA";
         }
 
         if($product->getSeason()) {
             $productSeason = $product->getSeason();
-            $tags .= ','.$productSeason;
         } else {
             $productSeason = "CLEAR DATA";
         }
 
 
         $allVariants = $em->getRepository('App:Products')->findBy(['barcode' => $product->getBarcode()]);
+        $tags = [];
         foreach ($allVariants as $variant) {
-            if ($product->getTags() !== "") {
-                $variant->setTags($product->getTags().','.$tagsInput);
-            } else {
-                $variant->setTags($tags.','.$tagsInput);
+            if($variant->getBrand()) {
+                $productBrand = $product->getBrand()->getName();
+                $tags[] = $productBrand;
             }
+            if($variant->getColor()) {
+                $productColor = $product->getColor()->getName();
+                $tags[] = $productColor;
+            }
+            if($variant->getSize()) {
+                $productSize = $product->getSize()->getSize();
+                $tags[] = $productSize;
+            }
+
+            if($variant->getSeason()) {
+                $productSeason = $product->getSeason();
+                $tags[] = $productSeason;
+            }
+
+            $tags = array_unique($tags);
+            $tags = implode(',', $tags);
+            
+            $variant->setTags($tags.','.$tagsInput);
+
         }
 
 
