@@ -293,6 +293,7 @@ class BddController extends AbstractController
                     $productId = $product->getShopifyProductId();
                     $imgFile = preg_replace('#data:image/[^;]+;base64,#', '', $image);
                     $shopifyAddImageProductId = (new ShopifyController())->addUpdateImage($productId, $imgFile, $key);
+                    $shopifyVariantAttach = (new ShopifyController())->attachImageWithVariant($product->getShopifyVariantId(), $shopifyAddImageProductId);
                     $imageObj->setShopifyId($shopifyAddImageProductId);
                     $shopifyAddImageProduct[] = $shopifyAddImageProductId;
                 }
