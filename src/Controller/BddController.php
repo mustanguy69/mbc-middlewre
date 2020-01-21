@@ -506,11 +506,11 @@ class BddController extends AbstractController
                                 ]
                             ]
                         ];
-                        if(!empty($shopifyAddImageProduct)) {
-                            foreach ($shopifyAddImageProduct as $uploadedImage) {
-                                $jsonVariant['variant']['image_id'] = $uploadedImage[0];
-                            }
-                        }
+//                        if(!empty($shopifyAddImageProduct)) {
+//                            foreach ($shopifyAddImageProduct as $uploadedImage) {
+//                                $jsonVariant['variant']['image_id'] = $uploadedImage[0];
+//                            }
+//                        }
 
                         // save variant
                         $shopifyVariantUpdate = (new ShopifyController())->updateVariantShopify($variantObj->variant->id, $jsonVariant);
