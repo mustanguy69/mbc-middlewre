@@ -290,8 +290,8 @@ class ShopifyController extends AbstractController
         $arr = [];
         $em = $this->getDoctrine()->getManager();
         $products = [];
-        if(strpos($collectionName, ',') !== false) {
-            $collectionArray = explode(',', $collectionName);
+        if(strpos($collectionName, ';') !== false) {
+            $collectionArray = explode(';', $collectionName);
             foreach ($collectionArray as $collectionName) {
                 $collection = $em->getRepository('App:ProductTypes')->findOneBy(['name' => $collectionName]);
                 $products[] = $em->getRepository('App:Products')->findBy(['type' => $collection]);
