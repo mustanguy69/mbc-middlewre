@@ -332,11 +332,6 @@ class BddController extends AbstractController
         }
 
 
-        // todo refacto
-
-
-
-
         if($product->getColor()) {
             $productColor = $product->getColor()->getName();
         } else {
@@ -357,31 +352,43 @@ class BddController extends AbstractController
 
 
         $allVariants = $em->getRepository('App:Products')->findBy(['barcode' => $product->getBarcode()]);
-        $tags = [];
+        $tags = array();
         foreach ($allVariants as $variant) {
+
             if($variant->getBrand()) {
-                $productBrand = $product->getBrand()->getName();
-                $tags[] = $productBrand;
+                $productBrand = $variant->getBrand()->getName();
+                array_push($tags, $productBrand);
             }
             if($variant->getColor()) {
-                $productColor = $product->getColor()->getName();
-                $tags[] = $productColor;
+                $productColor = $variant->getColor()->getName();
+                array_push($tags, $productColor);
             }
             if($variant->getSize()) {
-                $productSize = $product->getSize()->getSize();
-                $tags[] = $productSize;
+                $productSize = $variant->getSize()->getSize();
+                array_push($tags, $productSize);
             }
 
             if($variant->getSeason()) {
-                $productSeason = $product->getSeason();
-                $tags[] = $productSeason;
+                $productSeason = $variant->getSeason();
+                array_push($tags, $productSeason);
             }
 
-            $tags = array_unique($tags);
-            $tags = implode(',', $tags);
-            
-            $variant->setTags($tags.','.$tagsInput);
+        }
 
+        $tags = array_unique($tags);
+
+        if($tagsInput !== '') {
+            $tagsInputTab = explode(',', $tagsInput);
+            $tagsToAdd = array_diff($tagsInputTab, $tags);
+            $tagsToAdd = implode(',', $tagsToAdd);
+            array_push($tags, $tagsToAdd);
+        }
+
+        $tags = array_filter($tags);
+        $tags = implode(',', $tags);
+
+        foreach ($allVariants as $variant) {
+            $variant->setTags($tags);
         }
 
 
